@@ -1,0 +1,27 @@
+/// Intended application scope role. Broker supplies a trusted immutable CUSTOMDATA subject.
+/// This role does not authenticate CUSTOMDATA, and local parsing does not prove enforcement.
+role ExternalAppScope
+	modelPermission: read
+
+	tablePermission Scope = ```
+			VAR _subject = CUSTOMDATA()
+			VAR _scope = 'Scope'[Scope Key]
+			RETURN
+			    NOT ISBLANK(_subject)
+			        && _subject <> ""
+			        && COUNTROWS(
+			            FILTER(
+			                'User Access',
+			                EXACT('User Access'[Subject Key], _subject)
+			                    && 'User Access'[Scope Key] == _scope
+			            )
+			        ) > 0
+			```
+
+	tablePermission 'User Access' = ```
+			VAR _subject = CUSTOMDATA()
+			RETURN
+			    NOT ISBLANK(_subject)
+			        && _subject <> ""
+			        && EXACT('User Access'[Subject Key], _subject)
+			```

@@ -1,0 +1,63 @@
+/// Six synthetic activity rows with fixed-decimal amounts; unrestricted baseline is 1950.
+table Activity
+
+	/// Sum of synthetic amounts in the effective security and query context; empty returns BLANK.
+	measure 'Total Amount' = SUM('Activity'[Amount])
+		formatString: #,##0.00
+		displayFolder: Measures
+
+	/// Number of synthetic activity rows in context; COUNTROWS returns BLANK when empty.
+	measure 'Activity Count' = COUNTROWS('Activity')
+		formatString: #,##0
+		displayFolder: Measures
+
+	/// Deterministic synthetic row identifier for unrestricted fact-query assertions.
+	column 'Activity Key'
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Activity Key
+
+	/// Foreign key to the authorized customer/product pair.
+	column 'Scope Key'
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Scope Key
+
+	/// Foreign key to the neutral calendar.
+	column 'Date Key'
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Date Key
+
+	/// Synthetic fixed-decimal amount, aggregated by Total Amount.
+	column Amount
+		dataType: decimal
+		isHidden
+		isAvailableInMdx: false
+		formatString: #,##0.00
+		summarizeBy: none
+		sourceColumn: Amount
+
+	partition Activity = m
+		mode: import
+		source =
+			#table(
+			    type table [#"Activity Key" = Int64.Type, #"Scope Key" = Int64.Type, #"Date Key" = Int64.Type, Amount = Currency.Type],
+			    {
+			        {1, 1, 20260101, 100},
+			        {2, 1, 20260102, 150},
+			        {3, 2, 20260101, 40},
+			        {4, 2, 20260102, 60},
+			        {5, 3, 20260101, 700},
+			        {6, 4, 20260102, 900}
+			    }
+			)

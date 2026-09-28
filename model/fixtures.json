@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "modelAlias": "synthetic-rls-v1",
+  "entitlementVersion": "synthetic-v1",
+  "classification": "synthetic-only",
+  "liveValidated": false,
+  "scopes": [
+    { "scopeKey": 1, "customer": "A", "product": "Home" },
+    { "scopeKey": 2, "customer": "A", "product": "Auto" },
+    { "scopeKey": 3, "customer": "B", "product": "Home" },
+    { "scopeKey": 4, "customer": "B", "product": "Auto" }
+  ],
+  "activities": [
+    { "activityKey": 1, "scopeKey": 1, "dateKey": 20260101, "amount": 100 },
+    { "activityKey": 2, "scopeKey": 1, "dateKey": 20260102, "amount": 150 },
+    { "activityKey": 3, "scopeKey": 2, "dateKey": 20260101, "amount": 40 },
+    { "activityKey": 4, "scopeKey": 2, "dateKey": 20260102, "amount": 60 },
+    { "activityKey": 5, "scopeKey": 3, "dateKey": 20260101, "amount": 700 },
+    { "activityKey": 6, "scopeKey": 4, "dateKey": 20260102, "amount": 900 }
+  ],
+  "userAccess": [
+    { "subjectKey": "app-user-A1", "scopeKey": 1 },
+    { "subjectKey": "app-user-A2", "scopeKey": 2 },
+    { "subjectKey": "app-user-A3", "scopeKey": 1 },
+    { "subjectKey": "app-user-A3", "scopeKey": 2 },
+    { "subjectKey": "app-user-B1", "scopeKey": 3 },
+    { "subjectKey": "app-user-pairs", "scopeKey": 1 },
+    { "subjectKey": "app-user-pairs", "scopeKey": 4 }
+  ],
+  "calendar": { "start": "2026-01-01", "end": "2026-01-31", "expectedRows": 31 },
+  "baseline": { "totalAmount": 1950, "activityCount": 6, "scopeKeys": [1, 2, 3, 4], "entitlementRows": 7 },
+  "cases": [
+    { "name": "A1", "customData": "app-user-A1", "scopeKeys": [1], "activityKeys": [1, 2], "rowCount": 2, "entitlementRows": 1, "totalAmount": 250, "activityCount": 2 },
+    { "name": "A2", "customData": "app-user-A2", "scopeKeys": [2], "activityKeys": [3, 4], "rowCount": 2, "entitlementRows": 1, "totalAmount": 100, "activityCount": 2 },
+    { "name": "A3", "customData": "app-user-A3", "scopeKeys": [1, 2], "activityKeys": [1, 2, 3, 4], "rowCount": 4, "entitlementRows": 2, "totalAmount": 350, "activityCount": 4 },
+    { "name": "B1", "customData": "app-user-B1", "scopeKeys": [3], "activityKeys": [5], "rowCount": 1, "entitlementRows": 1, "totalAmount": 700, "activityCount": 1 },
+    { "name": "pairs", "customData": "app-user-pairs", "scopeKeys": [1, 4], "activityKeys": [1, 2, 6], "rowCount": 3, "entitlementRows": 2, "totalAmount": 1150, "activityCount": 3 },
+    { "name": "none", "customData": "app-user-none", "scopeKeys": [], "activityKeys": [], "rowCount": 0, "entitlementRows": 0, "totalAmount": null, "activityCount": null },
+    { "name": "missing", "customData": null, "scopeKeys": [], "activityKeys": [], "rowCount": 0, "entitlementRows": 0, "totalAmount": null, "activityCount": null },
+    { "name": "empty", "customData": "", "scopeKeys": [], "activityKeys": [], "rowCount": 0, "entitlementRows": 0, "totalAmount": null, "activityCount": null },
+    { "name": "unknown", "customData": "app-user-unknown", "scopeKeys": [], "activityKeys": [], "rowCount": 0, "entitlementRows": 0, "totalAmount": null, "activityCount": null },
+    { "name": "case-variant", "customData": "APP-USER-A1", "scopeKeys": [], "activityKeys": [], "rowCount": 0, "entitlementRows": 0, "totalAmount": null, "activityCount": null },
+    { "name": "trailing-space", "customData": "app-user-A1 ", "scopeKeys": [], "activityKeys": [], "rowCount": 0, "entitlementRows": 0, "totalAmount": null, "activityCount": null },
+    { "name": "metadata-only", "role": "MetadataOnly", "customData": "app-user-A1", "scopeKeys": [], "activityKeys": [], "rowCount": 0, "entitlementRows": 0, "totalAmount": null, "activityCount": null }
+  ],
+  "queryExpectations": {
+    "scopeRole": "ExternalAppScope",
+    "neutralDateRowsForAllCases": 31,
+    "emptyRawMeasureValue": "BLANK (JSON null), not zero",
+    "scopePairs": "Derive exact Customer/Product pairs from each case's Scope Keys; never Cartesian-expand.",
+    "allAndRemoveFilters": "Must not bypass engine RLS; requires approved live execution.",
+    "status": "Expected results only. Offline arithmetic is not DAX or RLS engine execution."
+  }
+}

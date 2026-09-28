@@ -1,0 +1,17 @@
+/// Synthetic inline Import fixture. Local metadata validation is not live RLS validation.
+model Model
+	culture: en-US
+	defaultMode: import
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	discourageImplicitMeasures
+
+	annotation __PBI_TimeIntelligenceEnabled = 0
+
+ref table Scope
+ref table Activity
+ref table Date
+ref table 'User Access'
+
+ref role ExternalAppScope
+ref role MetadataOnly

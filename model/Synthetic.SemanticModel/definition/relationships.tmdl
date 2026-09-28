@@ -1,0 +1,17 @@
+relationship 'Activity to Scope'
+	isActive: true
+	crossFilteringBehavior: oneDirection
+	securityFilteringBehavior: oneDirection
+	fromCardinality: many
+	toCardinality: one
+	fromColumn: Activity.'Scope Key'
+	toColumn: Scope.'Scope Key'
+
+relationship 'Activity to Date'
+	isActive: true
+	crossFilteringBehavior: oneDirection
+	securityFilteringBehavior: oneDirection
+	fromCardinality: many
+	toCardinality: one
+	fromColumn: Activity.'Date Key'
+	toColumn: Date.'Date Key'

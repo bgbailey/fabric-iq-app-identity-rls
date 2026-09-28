@@ -1,0 +1,37 @@
+/// One row per synthetic customer/product pair. Scope Key is the authorization grain.
+table Scope
+
+	/// Synthetic pair identifier; hidden for usability, not for security.
+	column 'Scope Key'
+		dataType: int64
+		isKey
+		isHidden
+		isAvailableInMdx: false
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Scope Key
+
+	/// Synthetic customer label A or B; never an actual customer.
+	column Customer
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Customer
+
+	/// Synthetic product within an explicitly authorized customer/product pair.
+	column Product
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Product
+
+	partition Scope = m
+		mode: import
+		source =
+			#table(
+			    type table [#"Scope Key" = Int64.Type, Customer = text, Product = text],
+			    {
+			        {1, "A", "Home"},
+			        {2, "A", "Auto"},
+			        {3, "B", "Home"},
+			        {4, "B", "Auto"}
+			    }
+			)

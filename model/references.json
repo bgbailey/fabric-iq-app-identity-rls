@@ -1,0 +1,61 @@
+{
+  "checkedOn": "2026-09-28",
+  "status": "Public documentation and local pinned guidance consulted; no Fabric model or cloud identity accessed.",
+  "upstream": {
+    "repository": "https://github.com/microsoft/skills-for-fabric",
+    "commit": "6c11ad58c25992e5d1435ce7cd80d217d5598a31",
+    "refresh": "Parent completed required clean refresh before delegation.",
+    "paths": [
+      "skills/semantic-model-authoring/SKILL.md",
+      "skills/semantic-model-authoring/references/modeling-guidelines.md",
+      "skills/semantic-model-authoring/references/naming-conventions.md",
+      "skills/semantic-model-authoring/references/tmdl-guidelines.md",
+      "skills/semantic-model-authoring/references/dax-guidelines.md",
+      "skills/semantic-model-authoring/references/pbip.md",
+      "common/ITEM-DEFINITIONS-CORE.md"
+    ]
+  },
+  "references": [
+    {
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/microsoft.analysisservices.tabular.tmdlserializer?view=analysisservices-dotnet",
+      "usedFor": "Verified Microsoft.AnalysisServices 19.114.12 package and TOM DeserializeDatabaseFromFolder/SerializeDatabaseToFolder APIs."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/analysis-services/tmdl/tmdl-overview?view=sql-analysis-services-2025",
+      "usedFor": "TMDL folder syntax and default-property expressions."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/analysis-services/tmdl/tmdl-how-to?view=sql-analysis-services-2025",
+      "usedFor": "Serializer samples and TmdlFormatException versus TmdlSerializationException. No connection/deployment sample executed."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/rest/api/fabric/semanticmodel/items/create-semantic-model",
+      "usedFor": "Offline request envelope; operation requires later authorized workspace creation and licensing. No API request sent."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/powerquery-m/sharptable",
+      "usedFor": "Typed inline fixture table construction."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/dax/customdata-function-dax",
+      "usedFor": "CUSTOMDATA returns a connection property or BLANK if absent; documented DirectQuery RLS restriction avoided by Import."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/dax/exact-function-dax",
+      "usedFor": "Case-sensitive subject string comparison."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/dax/countrows-function-dax",
+      "usedFor": "COUNTROWS returns BLANK on an empty table."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/fabric/security/service-admin-row-level-security",
+      "usedFor": "RLS filter propagation and elevated workspace-role bypass caution."
+    }
+  ],
+  "deviations": [
+    "Activity and Activity Count retain the explicitly requested interface rather than generic plural/count-prefix naming.",
+    "No source parameter is needed: all M partitions are entirely inline synthetic fixtures.",
+    "Calendar covers only the experiment's full January month; no year-over-year measures are claimed."
+  ]
+}

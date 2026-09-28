@@ -1,0 +1,34 @@
+/// Disconnected security lookup utility: one immutable subject/pair entitlement per row.
+/// Its own RLS filter prevents enumeration of another subject's entitlements.
+/// Hidden is only a usability setting; it does not secure the table.
+table 'User Access'
+	isHidden
+
+	/// Synthetic opaque application subject, compared case-sensitively with CUSTOMDATA.
+	column 'Subject Key'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Subject Key
+
+	/// Exact customer/product pair entitlement, not separate customer and product grants.
+	column 'Scope Key'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Scope Key
+
+	partition 'User Access' = m
+		mode: import
+		source =
+			#table(
+			    type table [#"Subject Key" = text, #"Scope Key" = Int64.Type],
+			    {
+			        {"app-user-A1", 1},
+			        {"app-user-A2", 2},
+			        {"app-user-A3", 1},
+			        {"app-user-A3", 2},
+			        {"app-user-B1", 3},
+			        {"app-user-pairs", 1},
+			        {"app-user-pairs", 4}
+			    }
+			)

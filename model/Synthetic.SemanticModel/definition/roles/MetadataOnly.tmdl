@@ -1,0 +1,8 @@
+/// Denies Scope and entitlement rows; intended Activity denial follows Scope relationship.
+/// Date remains neutral and visible. Never combine roles expecting deny to override allow.
+role MetadataOnly
+	modelPermission: read
+
+	tablePermission Scope = FALSE()
+
+	tablePermission 'User Access' = FALSE()
