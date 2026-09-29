@@ -89,8 +89,10 @@ flowchart LR
 
     EXT["Customers' MCP clients"]
 
-    subgraph FAB["Microsoft Fabric"]
+    subgraph FAB["Microsoft Fabric / Power BI"]
+        REST["Power BI REST<br/>executeDaxQueries · GenerateToken"]
         SM[("Semantic model<br/>one RLS role")]
+        REST -- "evaluates under the RLS role" --> SM
     end
 
     U --> FE
@@ -99,8 +101,8 @@ flowchart LR
     FE -- "chat with the user's token" --> GW
     EXT -- "MCP with the user's token" --> GW
     GW -- "sub → user key" --> ENT
-    GW -- "DAX + role + customData" --> SM
-    API -- "Embedded: GenerateToken<br/>same role + key" --> SM
+    GW -- "DAX + role + customData" --> REST
+    API -- "Embedded: GenerateToken<br/>same role + key" --> REST
 ```
 
 | Step | What you do | Stand-in in this sample |
