@@ -36,7 +36,9 @@ function Wait-FabricOperation([Microsoft.PowerShell.Commands.WebResponseObject] 
         $state = $stateResponse.Content | ConvertFrom-Json
         if ($state.status -eq 'Failed') { throw ($state | ConvertTo-Json -Depth 20) }
     } until ($state.status -eq 'Succeeded')
-    Invoke-Json Get "https://api.fabric.microsoft.com/v1/operations/$operationId/result" $Token
+    # Only operations that produce an item (create) have a result; updateDefinition does not.
+    $location = $stateResponse.Headers['Location'] | Select-Object -First 1
+    if ($location) { Invoke-Json Get $location $Token }
 }
 
 function Get-DefinitionParts([string] $Root) {

@@ -156,6 +156,9 @@ api.MapGet("/parity", async (ClaimsPrincipal principal, AppUserDirectory users, 
         "EVALUATE SUMMARIZECOLUMNS('Scope'[Customer], 'Scope'[Product], \"Total Amount\", [Total Amount], \"Activity Count\", [Activity Count]) ORDER BY 'Scope'[Customer], 'Scope'[Product]",
         ct));
 
+// Stateless MCP only uses POST. Answer other methods explicitly so MCP clients do not poll the portal page.
+app.MapMethods("/mcp", ["GET", "DELETE"], () => Results.StatusCode(StatusCodes.Status405MethodNotAllowed));
+app.MapFallback("/api/{**path}", () => Results.NotFound());
 app.MapFallbackToFile("index.html");
 
 app.Run();
