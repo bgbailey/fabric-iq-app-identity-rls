@@ -1,7 +1,7 @@
-# AI analytics for ISV users on Power BI semantic models
+# Semantic Gateway MCP server: AI analytics for ISV users on Power BI semantic models
 
-**An ISV-hosted MCP gateway: your users sign in to your app, any MCP client can ask questions, and the
-semantic model's row-level security decides what each user sees.**
+**A custom MCP server the ISV hosts in front of Microsoft Fabric: your users sign in to your app, any MCP
+client can ask questions, and the semantic model's row-level security decides what each user sees.**
 
 > **Educational sample.** This is a clear, working reference for a pattern, not a Microsoft product or
 > a production-ready service. It uses synthetic data only. Everything described below ran live on
@@ -25,8 +25,10 @@ inside the product. Two things block the obvious route:
 
 ## The solution in one picture
 
-The ISV runs a small **semantic gateway** next to its product. It is the only thing any AI client
-talks to.
+The ISV runs a **Semantic Gateway MCP server**: a custom MCP server next to its product, and the only
+thing any AI client talks to. It is an MCP server to your clients, an MCP client to Fabric IQ (schema only),
+and the point where every query gets the user's key. Full architecture, how to add it to your app and the
+user auth flow: [docs/architecture.md](docs/architecture.md).
 
 ```mermaid
 flowchart LR
@@ -38,7 +40,7 @@ flowchart LR
 
     IDP["Your identity provider<br/>issues the user's token"]
 
-    subgraph GW["ISV semantic gateway (you host it)"]
+    subgraph GW["Semantic Gateway MCP server (you host it)"]
         direction TB
         AUTH["1 Validate token<br/>map user to user key"]
         AGENT["Chat agent<br/>Azure OpenAI Responses"]
@@ -76,6 +78,7 @@ unfiltered or adversarial query only returns the caller's rows.
 
 ## Contents
 
+- [Architecture, app integration and auth flow](docs/architecture.md)
 - [How a question flows](#how-a-question-flows)
 - [The three tools](#the-three-tools)
 - [How the semantic model enforces access](#how-the-semantic-model-enforces-access)
@@ -305,12 +308,12 @@ Prerequisites: .NET 8 SDK, Node.js 24+, PowerShell 7, Azure CLI.
 
 | Path | What is there |
 |---|---|
-| [src/SemanticGateway/](src/SemanticGateway/) | **The solution.** ASP.NET Core gateway: token validation, MCP server, portal chat agent, Fabric IQ schema client, `executeDaxQueries` client, embed tokens. Start with [Program.cs](src/SemanticGateway/Program.cs). |
+| [src/SemanticGateway/](src/SemanticGateway/) | **The Semantic Gateway MCP server.** ASP.NET Core: token validation, MCP server, portal chat agent, Fabric IQ schema client, `executeDaxQueries` client, embed tokens. Start with [Program.cs](src/SemanticGateway/Program.cs). |
 | [src/web/](src/web/) | The sample ISV portal (React): sign-in, chat with a live tool timeline, embedded report and parity check. |
 | [model/](model/) | Synthetic TMDL semantic model with the RLS roles, and a one-visual PBIR report for the Embedded comparison. |
 | [scripts/](scripts/) | Setup: deploy the model and report, create the app identity and metadata client, grant workspace access, Azure OpenAI Bicep. |
 | [samples/](samples/) | Synthetic users and MCP client configuration examples. |
-| [docs/](docs/) | MCP client guide, Power BI Embedded comparison, live evidence. |
+| [docs/](docs/) | [Architecture, app integration and auth flow](docs/architecture.md), MCP client guide, Power BI Embedded comparison, live evidence. |
 | [dev/](dev/) | Verification used while building: a 42-check live RLS harness, unit tests and a TMDL validator. Not needed to run the sample. |
 
 ## FAQ

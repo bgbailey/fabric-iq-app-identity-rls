@@ -1,4 +1,4 @@
-# Semantic gateway: code tour
+# Semantic Gateway MCP server: code tour
 
 An ASP.NET Core app of about a dozen small files. Read [Program.cs](Program.cs) first: it wires
 everything in the order a request experiences it.
