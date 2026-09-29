@@ -1,0 +1,67 @@
+Third-party notices
+===================
+
+Scope of the project license
+----------------------------
+
+LICENSE contains the MIT license for the original sample code and authored
+documentation in this repository. It does not relicense third-party software,
+Microsoft artwork, product icons, logos, fonts or trademarks. Those materials
+remain subject to their owners' original licenses and terms.
+
+Microsoft artwork and trademarks
+--------------------------------
+
+Presentation files and diagram exports under docs\customer-overview may contain
+official Microsoft Fabric / Power BI product icons. The current deck source
+identifies these assets:
+
+* semantic_model_64_item.png
+* power_bi_48_regular.png
+
+Their source is the Microsoft Fabric icon collection; the existing authoring
+provenance records an official icon ZIP retrieved on 16 September 2026.
+
+Original usage guidance and terms:
+https://learn.microsoft.com/en-us/fabric/fundamentals/icons
+
+Microsoft trademark and brand guidance:
+https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks
+
+Use those assets only as permitted by the original guidance, including its
+restrictions on modification and use. Inclusion inside a slide, diagram,
+screenshot or other derived export does not put the asset under MIT or grant
+rights to use it as your own logo. Product names and marks belong to their
+respective owners. This sample does not imply Microsoft sponsorship,
+certification or endorsement.
+
+The deck builder currently references author-local Microsoft theme and
+architecture assets/tools that are not distributed as a self-contained build
+dependency here. Their availability does not grant redistribution rights.
+
+Software dependencies
+---------------------
+
+NuGet and npm dependencies retain their own licenses, copyright notices and
+any required NOTICE files. Their exact resolved versions are recorded in the
+checked-in packages.lock.json files and src\DemoWeb\package-lock.json.
+Principal dependencies include Apache Arrow / Arrow Compression, Azure.Identity,
+Microsoft.AnalysisServices, React / React DOM and their supporting build/test
+packages. Microsoft's product SDKs are not automatically covered by this
+repository's MIT license.
+
+Consult the actual pinned package distributions for complete license text and
+transitive notices, and preserve them when redistributing binaries or bundled
+web assets. This file is not a replacement for those package licenses or an
+exhaustive software bill of materials.
+
+Reference guidance
+------------------
+
+Technical guidance was consulted from:
+https://github.com/microsoft/skills-for-fabric
+
+The research commit and paths are recorded in docs\architecture.rst and
+model\references.json. That reference checkout is not bundled with the sample.
+Microsoft Learn and other linked documentation remain under their original
+terms; links and citations do not relicense them.

@@ -22,3 +22,6 @@ artifacts/
 TestResults/
 *.user
 *.suo
+**/node_modules/
+**/dist/
+*.budget.json

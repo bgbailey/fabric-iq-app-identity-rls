@@ -1,109 +1,117 @@
 Fabric IQ application-identity RLS
-=================================
+==================================
 
-An experimental reference implementation of application-owned authorization
-over a Power BI semantic model. The intended agent architecture keeps reviewed
-Fabric IQ MCP metadata, replaces native query execution with a trusted custom
-tool, and makes the semantic model enforce row-level security.
+An educational sample for ISVs adding AI analytics to an application whose users
+are **not Microsoft Entra users**. Keep application identity in the backend;
+let an LLM write a business query; let the semantic model enforce row access.
 
-Current status
---------------
-
-The first local synthetic model and broker increment is implemented. Cloud
-deployment, live RLS, Embedded parity and the IQ/Foundry integration have NOT
-been demonstrated. Do not treat offline tests as evidence of engine RLS.
-This is not a supported-product announcement or a production-ready sample.
-
-The first gate is deliberately independent of an LLM: send the SAME unfiltered
-DAX for several application subjects and demonstrate different authorized rows
-through ``executeDaxQueries`` with ``roles`` and ``customData``.
-
-Architecture
-------------
+The working demo is a React portal and .NET 8 backend at
+``http://127.0.0.1:5187``. Six synthetic subjects and five prepared **questions**
+make the flow easy to inspect. Questions are not DAX templates.
 
 ::
 
-    Application authentication
-      -> trusted subject / current entitlement decision
-      -> reviewed semantic metadata -> Foundry model
-      -> custom execution function (DAX only)
-      -> guarded Power BI query broker
-      -> executeDaxQueries + model role + CUSTOMDATA
-      -> semantic-model RLS -> bounded typed result
+    Application subject + question
+      -> live Fabric IQ MCP schema
+      -> GPT-5.4 generates DAX
+      -> trusted broker adds fixed role + application subject
+      -> executeDaxQueries -> semantic-model RLS -> Arrow/LZ4 rows
+      -> separate GPT-5.4 call explains those authorized rows
+      -> portal shows answer, exact rows and streamed technical trace
 
-    Same authorization decision
-      -> GenerateToken effective identity
-      -> embedded report using the same semantic model
+**The selector simulates authentication; it is not login.** Anyone using this
+local demo can select any listed subject. Do not expose it beyond loopback.
 
-The LLM must never supply credentials, subject identity, security roles,
-customer/product grants or physical model/workspace IDs.
+Start here
+----------
 
-What is in the first increment
------------------------------
+* `Five-minute learning guide and code tour <docs/learning-guide.rst>`_: understand
+  the approach before setting up services.
+* `Quickstart <docs/quickstart.rst>`_: run the local UI without cloud access, then
+  connect a live deployment.
+* `Deploy in your own development tenant <docs/deployment.rst>`_: model packaging,
+  identities, permissions, configuration and cleanup.
+* `Architecture <docs/architecture.rst>`_: actual calls, trust boundaries and
+  parameter ownership.
+* `Power BI Embedded comparison <docs/power-bi-embedded-comparison.rst>`_: what
+  transfers, what differs, and what has not been demonstrated.
+* `Observed status <docs/status.rst>`_: dated evidence, not fixture expectations.
+* `Contributing <docs/contributing.rst>`_: keep this a small, useful community sample.
+* `Implementation presentation v2 <docs/customer-overview_v2.rst>`_: actual
+  components, observed demo behavior and editable diagrams.
 
-* ``model/``: deterministic Import-mode semantic model, customer/product-pair
-  entitlements and expected row-level results.
-* ``tools/model-definition/``: offline TOM validation and content-addressed
-  Fabric definition packaging.
-* ``src/``: request-scoped query broker and developer-only proof CLI.
-* ``tests/``: local request-policy, parsing and fixture tests.
-* ``docs/``: architecture decisions, staged deployment and evidence criteria.
+.. image:: docs/customer-overview/Security_Request_Path_v2.png
+   :alt: Implemented request path from synthetic application user through QueryBroker to model RLS
 
-The developer CLI's subject selector is a TEST HARNESS. It is not application
-authentication and must not be exposed as a public endpoint.
+What has worked
+---------------
 
-Why these choices
------------------
+As of **28 September 2026**, selected live runs completed the integrated
+IQ-schema -> generated-DAX -> RLS-query -> explanation chain:
 
-The newer Power BI ``executeDaxQueries`` operation documents ``customData``,
-named ``roles``, and role selection by a workspace-admin service principal.
-It returns Apache Arrow IPC, including error rowsets on HTTP 200. The older
-JSON ``executeQueries`` API is not an app-only RLS fallback.
+* A1 overview: total 250, activity count 2; B1 overview: 700, count 1.
+* No-access overview: 0, count 0.
+* Paired-scope breakdown: A/Home 250, count 2; B/Auto 900, count 1.
+* The paired subject asking for B/Home returned no authorized rows.
 
-GA Fabric IQ MCP uses delegated Entra work/school authentication, not app-only
-authentication. The calling agent composes DAX. Native ``ExecuteQuery`` AND
-``ValueSearch`` must be excluded from the application's metadata path.
+Underlying records and the explicit daily amount/count comparison also ran
+successfully. The earlier deterministic harness passed **42 live adversarial engine-RLS
+checks**. These are different kinds of evidence: successful RLS does not prove
+that generated DAX answers every question correctly. The five-question,
+six-subject matrix is not claimed complete. See `status <docs/status.rst>`_ for
+the latest scope and remaining query-generation work.
 
-Reusing Embedded means reusing the entitlement resolver, role and model.
-An embed token is not a replacement bearer token for the query REST API.
+This is a learning demo, not a production-ready application or a Microsoft
+support statement. It has no application login, revocation workflow, hosted MCP
+server, embedded report frame or demonstrated report/query parity.
+**Foundry Agent Service is not required.** There are no fake answers, static
+schema fallbacks or prepared-DAX fallbacks when a live service fails.
 
-See ``docs/architecture.rst`` for the limits and ``model/README.rst`` for the
-fixture. Source-specific references are in ``model/references.json`` and the
-architecture document.
+Run the local UI
+----------------
 
-Local preparation
------------------
+Use Windows, PowerShell 7, Node.js 24+, the .NET 8/ASP.NET Core 8 runtime, and an
+SDK compatible with `global.json <global.json>`_. The current SDK pin is
+``9.0.318`` with latest-patch roll-forward; installing only an 8.x SDK does not
+satisfy that pin. The application still targets ``net8.0``.
 
-Requires a .NET SDK that supports net8.0. No cloud credentials are needed to
-validate or package the model::
-
-    dotnet restore .\tools\model-definition\ModelDefinition.csproj --locked-mode
-    dotnet run --project .\tools\model-definition\ModelDefinition.csproj --no-restore -- test
-    dotnet run --project .\tools\model-definition\ModelDefinition.csproj --no-restore -- package
-
-Broker build/test and live CLI usage are documented with that component.
-Pin and restore its package lock files before running it::
+From the repository root::
 
     dotnet restore .\IqRls.sln --locked-mode
-    dotnet test .\tests\IqRls.Tests\IqRls.Tests.csproj --no-restore
-    dotnet run --project .\src\IqRls.Cli --no-build -- selftest
+    npm --prefix .\src\DemoWeb ci
+    pwsh -File .\tools\Start-Demo.ps1 -Build
 
-See ``docs/status.rst`` for the evidence boundary and current implementation
-status; see ``src/IqRls.Cli/README.rst`` for the live command contract.
+Open ``http://127.0.0.1:5187``. Dependency restore downloads packages; starting
+without live configuration only serves the local UI and catalog. Run remains
+disabled and no cloud answers are substituted. The
+`quickstart <docs/quickstart.rst>`_ separates this from a working live deployment.
 
-Safe deployment and publication
-------------------------------
+Repository map
+--------------
 
-No command in this README grants permission to deploy. An operator must
-explicitly approve the actual target, compiled artifacts, role assignments,
-credential lifetime, capacity lease, cost estimate/cap and teardown.
-See ``docs/deployment.rst``.
+* `model <model/>`_: tiny inline Import model, exact customer/product-pair
+  entitlements and synthetic expected results.
+* `tools/model-definition <tools/model-definition/README.rst>`_: TOM validation
+  and complete Fabric definition packaging; **not a deployment script**.
+* `src/IqRls.Core <src/IqRls.Core/>`_: immutable context, certificate query broker
+  and strict Arrow decoder.
+* `src/IqRls.Demo <src/IqRls.Demo/>`_ and `src/DemoWeb <src/DemoWeb/>`_: live IQ
+  planning, Responses clients, localhost API and technical inspector.
+* `src/IqRls.Cli <src/IqRls.Cli/README.rst>`_ and `tests <tests/>`_: deterministic
+  proof harness and offline checks.
+* `Presentation assets <docs/customer-overview/>`_: versioned decks and diagrams.
+  Check each version's evidence date; the original v1 overview predates the
+  integrated live result. Deck rebuilding currently has author-local dependencies.
 
-Keep deployment configuration, credentials, certificates/private keys,
-approval attestations, token caches and raw live evidence OUTSIDE this
-repository. Only synthetic fixtures and reviewed/redacted results belong here.
-The repository starts private; public release is a separate approval gate.
+Sharing and license
+-------------------
 
-No license is granted by a private development draft. Select and add the
-appropriate project license and preserve dependency/sample notices before
-public distribution.
+Authored sample code and documentation are licensed under `MIT <LICENSE>`_.
+Microsoft artwork, product icons and trademarks are **not** relicensed by MIT;
+see `THIRD_PARTY_NOTICES <THIRD_PARTY_NOTICES>`_ for their original terms.
+This sample is not endorsed by Microsoft.
+
+Keep real environment identifiers, credentials, certificates, auth caches and
+raw live traces outside the repository. The repository remains private at this
+snapshot; adding documentation and a license does not constitute public
+publication.

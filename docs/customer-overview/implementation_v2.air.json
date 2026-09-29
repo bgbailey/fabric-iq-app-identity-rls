@@ -1,0 +1,136 @@
+{
+  "title": "Application user context reaches model RLS through QueryBroker",
+  "audience": "technical",
+  "pattern": "custom",
+  "template_id": null,
+  "template_version": null,
+  "assumptions": [
+    "Synthetic selector is not authentication. All four nodes represent actual implementation, not customer-portal placeholders; the React/.NET application runs on localhost without real application login or public hosting.",
+    "Request-path-only view: response arrows and the separate GPT-5.4 Responses explanation call (store:false) are deliberately omitted. Only model-filtered rows enter that explanation call.",
+    "This documents the running educational demo, not a proposed architecture or production-support claim. No Embedded report, Foundry Agent Service, or hosted MCP is implemented."
+  ],
+  "evidence_gaps": [
+    "Exact delegated IQ permission grants are not supplied; no additional permissions are inferred.",
+    "Integrated live observations are caller-reported without underlying execution traces or metric definitions. Earlier 42 deterministic RLS checks are separate evidence, not an integrated live test count.",
+    "Actual Embedded parity remains outside the implementation; an exhaustive live test matrix and production support are not established."
+  ],
+  "unresolved_services": [
+    {
+      "id": "app",
+      "raw_mention": "Demo selector",
+      "guessed_category": "custom application",
+      "proposed_label": "Demo selector",
+      "reason": "Intentionally custom, implemented React/.NET application component; null service_id is not a future placeholder."
+    },
+    {
+      "id": "planner",
+      "raw_mention": "Live query planner",
+      "guessed_category": "custom query planning",
+      "proposed_label": "Live query planner",
+      "reason": "Intentionally custom, implemented planner; its metadata and generation dependencies are documented in notes, not added as service nodes."
+    },
+    {
+      "id": "broker",
+      "raw_mention": "QueryBroker",
+      "guessed_category": "custom query execution",
+      "proposed_label": "QueryBroker",
+      "reason": "Intentionally custom, implemented .NET broker; no selected catalog service represents this component."
+    }
+  ],
+  "sources": [
+    "https://learn.microsoft.com/en-us/fabric/iq/connectors/fabric-iq-mcp",
+    "https://learn.microsoft.com/en-us/rest/api/power-bi/datasets/execute-dax-queries",
+    "https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/responses"
+  ],
+  "catalog_version": "0.1.0",
+  "zones": [
+    {
+      "id": "application",
+      "label": "React/.NET localhost demo",
+      "kind": "external",
+      "parent_zone": null,
+      "style": "solid",
+      "description": "Running application components; no public hosting.",
+      "slot": null,
+      "position": null,
+      "children": [],
+      "min_nodes": null,
+      "max_nodes": null,
+      "node_layout": "vertical"
+    },
+    {
+      "id": "fabric",
+      "label": "Power BI semantic model",
+      "kind": "fabric",
+      "parent_zone": null,
+      "style": "solid",
+      "description": "Semantic model queried by the running demo.",
+      "slot": null,
+      "position": null,
+      "children": [],
+      "min_nodes": null,
+      "max_nodes": null,
+      "node_layout": "vertical"
+    }
+  ],
+  "security_annotations": [],
+  "nodes": [
+    {
+      "id": "app",
+      "zone": "application",
+      "service_id": null,
+      "label": "Demo selector",
+      "notes": "React accepts one of six synthetic app-user IDs. Backend SyntheticSubjects creates immutable app-user context, not an authenticated application identity.",
+      "is_optional": false
+    },
+    {
+      "id": "planner",
+      "zone": "application",
+      "service_id": null,
+      "label": "Live query planner",
+      "notes": "Live IQ GetSemanticModelSchema returns real metadata under a separate delegated Entra user; exact delegated IQ permission grants are unspecified. Only MetadataTool is allowed under IQ; native ExecuteQuery and ValueSearch are not used. GPT-5.4 Responses generates DAX in a separate store:false call.",
+      "is_optional": false
+    },
+    {
+      "id": "broker",
+      "zone": "application",
+      "service_id": null,
+      "label": "QueryBroker",
+      "notes": ".NET QueryBroker authenticates using a certificate service principal. QuerySP has workspaceAdmin for role selection. The broker attaches the ExternalAppScope role and trusted app-user customData outside generated DAX, calls the newer executeDaxQueries endpoint, and decodes Arrow/LZ4 results. The endpoint can return HTTP 200 error rowsets.",
+      "is_optional": false
+    },
+    {
+      "id": "model",
+      "zone": "fabric",
+      "service_id": "fabric.semantic_model",
+      "label": "Semantic Model",
+      "notes": "CUSTOMDATA-based RLS returns allowed rows. Selected caller-reported integrated live observations, 2026-09-28 Eastern: A1 overview 250/2; B1 overview 700/1; noaccess 0/0; A1 detail keys 1 and 2; A3 daily 140/2 then 210/2. Numeric observation notation is preserved as supplied.",
+      "is_optional": false
+    }
+  ],
+  "edges": [
+    {
+      "id": "session",
+      "from": "app",
+      "to": "broker",
+      "kind": "identity",
+      "label": "SyntheticSubjects context"
+    },
+    {
+      "id": "dax",
+      "from": "planner",
+      "to": "broker",
+      "kind": "query",
+      "label": "Generated DAX"
+    },
+    {
+      "id": "execute",
+      "from": "broker",
+      "to": "model",
+      "kind": "query",
+      "label": "roles + customData + DAX"
+    }
+  ],
+  "rails": [],
+  "style_mode": "minimal"
+}
