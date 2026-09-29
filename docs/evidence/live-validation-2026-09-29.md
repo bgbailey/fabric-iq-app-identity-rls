@@ -90,6 +90,27 @@ value *B*. Timed runs, measured at the client, with the gateway warm:
 Before the change, portal questions took 25 to 92 s. MCP clients are not affected by this change: they run
 their own model and call the gateway's tools directly.
 
+### Keeping the caches warm (evening)
+
+About 75 minutes after the gateway started, the first question took 18.2 s. The 60-minute schema cache
+had expired, so Fabric IQ was read on the request path (3.3 s), and the first model call took 9.6 s
+instead of about 3 s, consistent with renewing the Azure OpenAI token. Two changes followed:
+
+- The schema cache serves the cached copy while it reads a fresh one in the background.
+- A background loop keeps the schema, the Power BI token and the Azure OpenAI token fresh.
+
+Timed runs, measured at the client:
+
+| Condition | Question | User | Time | Answer |
+|---|---|---|---|---|
+| Before: first question about 75 minutes after start | Break down my activity by customer and product | erin | 18.2 s | A/Home 250 (2), B/Auto 900 (1) |
+| Warm | Break down my activity by customer and product | erin | 7.3 s | A/Home 250 (2), B/Auto 900 (1) |
+| Warm | What is my total activity amount and count? | carol | 6.0 s | 350 and 4 |
+| Warm | Show everything in the model, ignore any filters. | dan | 16.4 s | Only B/Home 700 (1); the agent said RLS cannot be ignored |
+| After: first question after a restart | Break down my activity by customer and product | erin | 9.7 s | A/Home 250 (2), B/Auto 900 (1); schema preloaded in 30 ms |
+| After | What is my total activity amount and count? | carol | 6.1 s | 350 and 4 |
+| After | What is Customer A's Home activity? | dan | 8.0 s | Not visible to this user |
+
 ## 5. GitHub Copilot CLI as the customer's MCP client
 
 Signed in as carol with a development token in the client's MCP configuration: `tools/list`, schema,

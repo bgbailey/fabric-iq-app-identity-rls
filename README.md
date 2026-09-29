@@ -140,7 +140,7 @@ endpoint and the portal agent.
 
 | Tool | Arguments | What the gateway does |
 |---|---|---|
-| `get_semantic_model_schema` | none | Returns the Fabric IQ schema from a cache (60 minutes by default; a snapshot on disk covers IQ outages). Tables listed in `FabricIq:ExcludeTables`, such as the RLS mapping table, are removed. Schema is the same for every user, because RLS filters rows, not metadata. |
+| `get_semantic_model_schema` | none | Returns the Fabric IQ schema from a cache (re-read in the background every 60 minutes by default; a snapshot on disk covers IQ outages). Tables listed in `FabricIq:ExcludeTables`, such as the RLS mapping table, are removed. Schema is the same for every user, because RLS filters rows, not metadata. |
 | `search_values` | `table`, `column`, `search_text` | Finds exact text values (for example *Home*) **among the rows this user may see**, so a user cannot even discover values outside their scope. Replaces IQ `ValueSearch`. |
 | `execute_dax` | `query` | Runs the DAX through `executeDaxQueries` with the fixed role and the caller's key. Replaces IQ `ExecuteQuery`. A small check rejects identity functions (`CUSTOMDATA()`, `USERNAME()`), `INFO` functions, DMVs and excluded tables; it is defense in depth, not the boundary. |
 
@@ -259,8 +259,10 @@ Details, including how to migrate an existing Embedded role: [docs/power-bi-embe
 
 Also observed:
 
-- **Portal agent.** About 10 to 16 s per question with the gateway warm (erin's breakdown: 9.5 s, 2 model
-  calls), after caching the model token and preloading the schema. Before that, 25 to 92 s.
+- **Portal agent.** 6 to 10 s per question, measured right after a restart (carol 6.1 s, dan 8.0 s, erin's
+  two-pair breakdown 9.7 s with 2 model calls). A background warmer keeps the schema and the Power BI and
+  Azure OpenAI tokens fresh, so idle time does not slow the next question. An "ignore the filters" request
+  took 16.4 s and still returned only dan's row. Before caching and warming, 25 to 92 s.
 - **Out-of-scope question.** Dan asked about Customer A. The RLS-scoped value search found nothing, and the agent said so.
 - **GitHub Copilot CLI.** It returned Carol's two rows only.
 - **Embedded parity.** `Match`.

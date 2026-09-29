@@ -39,6 +39,7 @@ builder.Services.AddSingleton<SchemaCache>();
 builder.Services.AddSingleton<EmbedTokenService>();
 builder.Services.AddSingleton<SemanticModelTools>();
 builder.Services.AddSingleton<ChatAgent>();
+builder.Services.AddHostedService<CacheWarmer>();
 
 // 1. Authenticate the ISV's own users. Only tokens issued for this gateway (audience) are accepted.
 builder.Services
@@ -89,13 +90,6 @@ app.Use(async (context, next) =>
 });
 
 if (auth.IsDevelopment) app.MapDevIdentityProvider();
-
-// Read the schema from Fabric IQ once at startup, so the first user question does not wait for it.
-app.Lifetime.ApplicationStarted.Register(() => _ = Task.Run(async () =>
-{
-    try { await app.Services.GetRequiredService<SchemaCache>().GetAsync(CancellationToken.None); }
-    catch (Exception error) { app.Logger.LogWarning("Schema warm-up failed: {Message}", error.Message); }
-}));
 
 app.MapMcp("/mcp").RequireAuthorization();
 

@@ -8,8 +8,9 @@ public sealed record ModelSchema(JsonNode Schema, DateTimeOffset RetrievedAtUtc,
 
 /// <summary>
 /// Caches the Fabric IQ schema. The schema is the same for every user (RLS filters rows, not
-/// metadata), so one fetch serves everyone until it expires. The last good copy is written to
-/// disk and used if Fabric IQ is unreachable.
+/// metadata), so one fetch serves everyone. Only the very first read waits for Fabric IQ; after
+/// that, an expired copy is still served while a fresh one is read in the background. The last
+/// good copy is written to disk and used if Fabric IQ is unreachable.
 /// </summary>
 public sealed class SchemaCache(FabricIqSchemaClient fabricIq, IOptions<FabricIqSettings> options, ILogger<SchemaCache> log)
 {
@@ -22,12 +23,18 @@ public sealed class SchemaCache(FabricIqSchemaClient fabricIq, IOptions<FabricIq
 
     public async Task<ModelSchema> GetAsync(CancellationToken cancellationToken)
     {
-        if (current is not null && DateTimeOffset.UtcNow < refreshAfter) return current;
+        if (current is null) await RefreshAsync(wait: true, cancellationToken);
+        else if (DateTimeOffset.UtcNow >= refreshAfter) _ = Task.Run(() => RefreshAsync(wait: false, CancellationToken.None));
+        return current!;
+    }
 
-        await refreshLock.WaitAsync(cancellationToken);
+    private async Task RefreshAsync(bool wait, CancellationToken cancellationToken)
+    {
+        // A background refresh skips if another refresh is already running.
+        if (!await refreshLock.WaitAsync(wait ? Timeout.Infinite : 0, cancellationToken)) return;
         try
         {
-            if (current is not null && DateTimeOffset.UtcNow < refreshAfter) return current;
+            if (current is not null && DateTimeOffset.UtcNow < refreshAfter) return;
             try
             {
                 var schema = RemoveExcludedTables(JsonNode.Parse(await fabricIq.GetSchemaJsonAsync(cancellationToken))!);
@@ -35,13 +42,12 @@ public sealed class SchemaCache(FabricIqSchemaClient fabricIq, IOptions<FabricIq
                 Directory.CreateDirectory(Path.GetDirectoryName(SnapshotPath)!);
                 await File.WriteAllTextAsync(SnapshotPath, JsonSerializer.Serialize(new { current.RetrievedAtUtc, Schema = schema.ToJsonString() }), cancellationToken);
             }
-            catch (Exception error) when (error is not OperationCanceledException && LoadSnapshot() is { } snapshot)
+            catch (Exception error) when (!cancellationToken.IsCancellationRequested && (current ?? LoadSnapshot()) is { } fallback)
             {
-                log.LogWarning("Fabric IQ schema refresh failed ({Message}); using the snapshot from {Time}.", error.Message, snapshot.RetrievedAtUtc);
-                current = snapshot;
+                log.LogWarning("Fabric IQ schema refresh failed ({Message}); using the copy from {Time}.", error.Message, fallback.RetrievedAtUtc);
+                current = fallback;
             }
             refreshAfter = DateTimeOffset.UtcNow.AddMinutes(options.Value.SchemaCacheMinutes);
-            return current;
         }
         finally
         {

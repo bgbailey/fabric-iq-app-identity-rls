@@ -42,12 +42,15 @@ public sealed class ChatAgent(SemanticModelTools tools, IOptions<AzureOpenAISett
     private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromMinutes(2) };
 
     // In Azure: the app's managed identity. Locally: your Azure CLI sign-in (az login).
-    // The token is cached until shortly before it expires, so only the first question pays for it.
+    // The token is cached and renewed by CacheWarmer before it expires, so no question waits for it.
     private readonly TokenCredential credential = Environment.GetEnvironmentVariable("IDENTITY_ENDPOINT") is not null
         ? new ManagedIdentityCredential()
         : new AzureCliCredential(new AzureCliCredentialOptions { TenantId = fabricOptions.Value.TenantId });
     private readonly SemaphoreSlim tokenLock = new(1, 1);
     private AccessToken cachedToken;
+
+    public Task WarmUpAsync(CancellationToken cancellationToken) =>
+        string.IsNullOrEmpty(aiOptions.Value.Endpoint) ? Task.CompletedTask : GetModelTokenAsync(cancellationToken);
 
     private async Task<string> GetModelTokenAsync(CancellationToken cancellationToken)
     {

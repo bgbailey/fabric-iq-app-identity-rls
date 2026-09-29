@@ -13,7 +13,8 @@ everything in the order a request experiences it.
 | [Fabric/DaxQueryClient.cs](Fabric/DaxQueryClient.cs) | `executeDaxQueries` with the fixed RLS role and `customData` (or `effectiveUsername`). This replaces Fabric IQ `ExecuteQuery`. |
 | [Fabric/ArrowResults.cs](Fabric/ArrowResults.cs) | Reads the Apache Arrow response, including error rowsets. |
 | [Fabric/FabricIqSchemaClient.cs](Fabric/FabricIqSchemaClient.cs) | MCP **client** to Fabric IQ: calls `GetSemanticModelSchema` as the metadata account. Also the one-time `sign-in`. |
-| [Fabric/SchemaCache.cs](Fabric/SchemaCache.cs) | Caches the schema, removes excluded tables and keeps a snapshot on disk. |
+| [Fabric/SchemaCache.cs](Fabric/SchemaCache.cs) | Caches the schema, removes excluded tables and keeps a snapshot on disk. An expired copy is served while a fresh one is read in the background. |
+| [CacheWarmer.cs](CacheWarmer.cs) | Background loop that keeps the schema and the Power BI and Azure OpenAI tokens fresh, so no question waits for them. |
 | [Fabric/EmbedTokenService.cs](Fabric/EmbedTokenService.cs) | Power BI Embedded token with the same role and key, for the comparison page. |
 | [Tools/SemanticModelTools.cs](Tools/SemanticModelTools.cs) | The three tools and their contract, shared by MCP and the chat agent. |
 | [Tools/McpToolsEndpoint.cs](Tools/McpToolsEndpoint.cs) | MCP **server** registration with the official SDK: list tools, call tools as the token's user. |
