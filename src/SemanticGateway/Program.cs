@@ -90,6 +90,13 @@ app.Use(async (context, next) =>
 
 if (auth.IsDevelopment) app.MapDevIdentityProvider();
 
+// Read the schema from Fabric IQ once at startup, so the first user question does not wait for it.
+app.Lifetime.ApplicationStarted.Register(() => _ = Task.Run(async () =>
+{
+    try { await app.Services.GetRequiredService<SchemaCache>().GetAsync(CancellationToken.None); }
+    catch (Exception error) { app.Logger.LogWarning("Schema warm-up failed: {Message}", error.Message); }
+}));
+
 app.MapMcp("/mcp").RequireAuthorization();
 
 app.MapGet("/api/config", (AppUserDirectory users, EmbedTokenService embed, IOptions<AzureOpenAISettings> ai, IOptions<FabricSettings> fabric) => new

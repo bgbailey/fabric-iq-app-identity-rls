@@ -20,9 +20,10 @@ public sealed record ChatUsage(string Model, int ModelCalls, int InputTokens, in
 public sealed record ChatResult(string Answer, IReadOnlyList<ToolCallSummary> ToolCalls, QueryResult? Table, ChatUsage Usage);
 
 /// <summary>
-/// The portal's chat agent: an Azure OpenAI Responses API tool loop over the same three tools
-/// the MCP endpoint exposes. The model decides which tools to call; the gateway runs every call
-/// as the signed-in user, so the model never sees rows that user cannot see.
+/// The portal's chat agent: an Azure OpenAI Responses API tool loop over the same tools the MCP
+/// endpoint exposes. The cached schema is placed in the conversation up front, so the model only needs
+/// search_values and execute_dax. The gateway runs every call as the signed-in user, so the model
+/// never sees rows that user cannot see.
 /// </summary>
 public sealed class ChatAgent(SemanticModelTools tools, IOptions<AzureOpenAISettings> aiOptions, IOptions<FabricSettings> fabricOptions)
 {

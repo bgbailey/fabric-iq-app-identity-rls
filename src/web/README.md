@@ -1,6 +1,6 @@
 # ISV portal
 
-React + TypeScript portal for the ISV semantic gateway sample.
+React + TypeScript portal for the Semantic Gateway MCP server sample.
 
 It shows:
 

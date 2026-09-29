@@ -72,10 +72,23 @@ Every call also carried an injected argument `userKey: "app-user-B1"`; it was ig
 Before the agent instructions were tightened, the second question used all 6 model calls and retried
 the search several times; the answer was still correct and still scoped.
 
-Later the same afternoon two changes cut a portal question from 92 s to about 10-16 s: the Azure OpenAI
-token is now cached, and the cached schema is given to the agent up front instead of costing a model round trip.
-`search_values` now returns the values the user can see when nothing matches, so *Customer B* resolves to the
-stored value *B* (dan: B/Home 700 across 1; erin: not visible).
+### After the latency fix (same afternoon)
+
+Two changes: the Azure OpenAI token is cached instead of fetched for every model call, and the cached
+schema is given to the portal agent up front instead of costing a model round trip. `search_values` also
+now returns the values the user can see when nothing matches, so *Customer B* resolves to the stored
+value *B*. Timed runs, measured at the client, with the gateway warm:
+
+| Question | User | Time | Answer |
+|---|---|---|---|
+| What is my total amount and activity count? | alice | 10.7 s | 250 and 2 |
+| Break down my activity by customer and product | erin | 9.5 s (2 model calls) | A/Home 250 (2), B/Auto 900 (1) |
+| What is Customer B's Home activity? | dan | 15.2 s | 700 across 1 activity |
+| What is Customer B's Home activity? | erin | 16.1 s | No visible activity for this user |
+| What is Customer A's Home activity? | dan | 12.1 s | Not visible to this user |
+
+Before the change, portal questions took 25 to 92 s. MCP clients are not affected by this change: they run
+their own model and call the gateway's tools directly.
 
 ## 5. GitHub Copilot CLI as the customer's MCP client
 

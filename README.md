@@ -94,7 +94,8 @@ unfiltered or adversarial query only returns the caller's rows.
 ## How a question flows
 
 The same flow serves both front doors. An MCP client runs the tool loop itself; the portal's chat agent
-runs it inside the gateway with Azure OpenAI.
+runs it inside the gateway with Azure OpenAI, and starts with the cached schema already in hand, which
+saves one model round trip.
 
 ```mermaid
 sequenceDiagram
@@ -192,7 +193,7 @@ RLS restricts the tables themselves, and those functions only remove filters fro
 | **ISV user** | Your customer's user, e.g. `erin`. Not in Entra. | Your identity provider. The demo has a built-in development issuer. | Signing in to the portal or an MCP client. The gateway maps them to a user key, e.g. `app-user-pairs`. |
 | **App identity** | An Entra service principal owned by the ISV | Certificate (client credentials) | Every data query and embed token, for every user, like app-owns-data Embedded. **Workspace Admin**, because only Admins may choose `roles` on `executeDaxQueries`. |
 | **Metadata account** | One delegated Entra account | A public client app. One interactive `sign-in`, then silent refresh from the OS-protected MSAL cache. | Reading the schema from Fabric IQ, and nothing else. IQ `ExecuteQuery` is never called. |
-| **Gateway's Azure identity** | Managed identity in Azure, your Azure CLI sign-in locally | `ManagedIdentityCredential`, then `AzureCliCredential` pinned to the tenant | The portal agent's Azure OpenAI calls (*Cognitive Services OpenAI User*). |
+| **Gateway's Azure identity** | Managed identity in Azure, your Azure CLI sign-in locally | `ManagedIdentityCredential` on App Service or Container Apps, otherwise `AzureCliCredential` for the tenant; the token is cached | The portal agent's Azure OpenAI calls (*Cognitive Services OpenAI User*). |
 
 Only tokens issued **for the gateway** (issuer and audience validated) are accepted. The gateway never
 forwards a user's token to Microsoft services, and never accepts a Microsoft token from a client.
@@ -258,7 +259,8 @@ Details, including how to migrate an existing Embedded role: [docs/power-bi-embe
 
 Also observed:
 
-- **Portal agent.** Erin's breakdown took 3 model calls (about 25 s).
+- **Portal agent.** About 10 to 16 s per question with the gateway warm (erin's breakdown: 9.5 s, 2 model
+  calls), after caching the model token and preloading the schema. Before that, 25 to 92 s.
 - **Out-of-scope question.** Dan asked about Customer A. The RLS-scoped value search found nothing, and the agent said so.
 - **GitHub Copilot CLI.** It returned Carol's two rows only.
 - **Embedded parity.** `Match`.

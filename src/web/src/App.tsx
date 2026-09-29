@@ -114,7 +114,7 @@ export function App() {
       <header className="app-header">
         <div className="brand">
           <svg className="brand-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 8h22M5 16h22M5 24h22M11 5v22M21 5v22" /></svg>
-          <div><h1>Contoso Insights</h1><p>ISV semantic gateway sample</p></div>
+          <div><h1>Contoso Insights</h1><p>Semantic Gateway MCP server sample</p></div>
         </div>
         {config && <div className="header-meta"><span className="proof-badge">{config.model}</span><span className="proof-badge">{config.identityMode}</span></div>}
       </header>
