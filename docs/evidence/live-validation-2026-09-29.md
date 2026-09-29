@@ -72,6 +72,11 @@ Every call also carried an injected argument `userKey: "app-user-B1"`; it was ig
 Before the agent instructions were tightened, the second question used all 6 model calls and retried
 the search several times; the answer was still correct and still scoped.
 
+Later the same afternoon two changes cut a portal question from 92 s to about 10-16 s: the Azure OpenAI
+token is now cached, and the cached schema is given to the agent up front instead of costing a model round trip.
+`search_values` now returns the values the user can see when nothing matches, so *Customer B* resolves to the
+stored value *B* (dan: B/Home 700 across 1; erin: not visible).
+
 ## 5. GitHub Copilot CLI as the customer's MCP client
 
 Signed in as carol with a development token in the client's MCP configuration: `tools/list`, schema,

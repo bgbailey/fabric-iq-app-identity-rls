@@ -30,19 +30,39 @@ public sealed class ChatAgent(SemanticModelTools tools, IOptions<AzureOpenAISett
     private const int MaxToolCalls = 10;
 
     private const string Instructions =
-        "You are the analytics assistant inside the ISV's application. Answer the user's question about their data " +
-        "by calling the tools: get the schema first, resolve text values with search_values when needed, then run DAX " +
-        "with execute_dax. Row-level security is applied for the signed-in user automatically. " +
-        "If search_values finds nothing, the value does not exist or is not visible to this user: say so and do not retry. " +
+        "You are the analytics assistant inside the ISV's application. Answer the user's question about their data. " +
+        "The semantic model schema is provided; write DAX and run it with execute_dax, and use search_values only when " +
+        "you must resolve an exact text value. Row-level security is applied for the signed-in user automatically. " +
+        "If search_values returns no match, check visibleValues: use the matching stored value (for example \"B\" for \"Customer B\"); " +
+        "if none fits, say the value is not visible to this user. " +
         "Answer in one to three plain sentences that name the values involved (for example customer and product) " +
         "and use only numbers returned by the tools. Do not format the answer as a table; the application shows the rows separately.";
 
     private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromMinutes(2) };
 
     // In Azure: the app's managed identity. Locally: your Azure CLI sign-in (az login).
-    private readonly TokenCredential credential = new ChainedTokenCredential(
-        new ManagedIdentityCredential(),
-        new AzureCliCredential(new AzureCliCredentialOptions { TenantId = fabricOptions.Value.TenantId }));
+    // The token is cached until shortly before it expires, so only the first question pays for it.
+    private readonly TokenCredential credential = Environment.GetEnvironmentVariable("IDENTITY_ENDPOINT") is not null
+        ? new ManagedIdentityCredential()
+        : new AzureCliCredential(new AzureCliCredentialOptions { TenantId = fabricOptions.Value.TenantId });
+    private readonly SemaphoreSlim tokenLock = new(1, 1);
+    private AccessToken cachedToken;
+
+    private async Task<string> GetModelTokenAsync(CancellationToken cancellationToken)
+    {
+        if (cachedToken.ExpiresOn > DateTimeOffset.UtcNow.AddMinutes(5)) return cachedToken.Token;
+        await tokenLock.WaitAsync(cancellationToken);
+        try
+        {
+            if (cachedToken.ExpiresOn <= DateTimeOffset.UtcNow.AddMinutes(5))
+                cachedToken = await credential.GetTokenAsync(new TokenRequestContext(["https://ai.azure.com/.default"]), cancellationToken);
+            return cachedToken.Token;
+        }
+        finally
+        {
+            tokenLock.Release();
+        }
+    }
 
     public async Task<ChatResult> RunAsync(AppUser user, ChatRequest chat, Func<ChatEvent, Task> onEvent, CancellationToken cancellationToken)
     {
@@ -58,7 +78,15 @@ public sealed class ChatAgent(SemanticModelTools tools, IOptions<AzureOpenAISett
             ["identityMode"] = fabric.IdentityMode.ToString()
         });
 
-        var input = new JsonArray();
+        // The schema is the same for every user, so the portal agent gets it up front (cached) and the
+        // model can go straight to DAX. MCP clients call get_semantic_model_schema themselves.
+        var schema = await tools.InvokeAsync(user, SemanticModelTools.GetSchema, null, cancellationToken);
+        await Emit("tool", "completed", SemanticModelTools.GetSchema, new() { ["source"] = "preloaded" });
+
+        var input = new JsonArray
+        {
+            new JsonObject { ["role"] = "developer", ["content"] = "Semantic model schema (from Fabric IQ):\n" + schema.Text }
+        };
         foreach (var turn in chat.History ?? []) input.Add(new JsonObject { ["role"] = turn.Role, ["content"] = turn.Content });
         input.Add(new JsonObject { ["role"] = "user", ["content"] = chat.Message });
 
@@ -120,13 +148,14 @@ public sealed class ChatAgent(SemanticModelTools tools, IOptions<AzureOpenAISett
     private async Task<JsonNode> CallResponsesApiAsync(JsonArray input, CancellationToken cancellationToken)
     {
         var ai = aiOptions.Value;
-        var token = await credential.GetTokenAsync(new TokenRequestContext(["https://ai.azure.com/.default"]), cancellationToken);
+        var token = await GetModelTokenAsync(cancellationToken);
         var request = new JsonObject
         {
             ["model"] = ai.Deployment,
             ["instructions"] = Instructions,
             ["input"] = input.DeepClone(),
-            ["tools"] = new JsonArray(SemanticModelTools.Definitions.Select(tool => (JsonNode)new JsonObject
+            // The schema is already in the conversation, so the portal agent only needs the two data tools.
+            ["tools"] = new JsonArray(SemanticModelTools.Definitions.Where(tool => tool.Name != SemanticModelTools.GetSchema).Select(tool => (JsonNode)new JsonObject
             {
                 ["type"] = "function",
                 ["name"] = tool.Name,
@@ -143,7 +172,7 @@ public sealed class ChatAgent(SemanticModelTools tools, IOptions<AzureOpenAISett
         {
             Content = JsonContent.Create(request)
         };
-        message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.Token);
+        message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         using var response = await Http.SendAsync(message, cancellationToken);
         var body = await response.Content.ReadAsStringAsync(cancellationToken);
         if (!response.IsSuccessStatusCode) throw new InvalidOperationException($"Azure OpenAI returned HTTP {(int)response.StatusCode}: {body}");

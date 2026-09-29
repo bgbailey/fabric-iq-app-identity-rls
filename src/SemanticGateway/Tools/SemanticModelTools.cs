@@ -87,8 +87,18 @@ public sealed class SemanticModelTools(SchemaCache schemaCache, DaxQueryClient d
         var query = $"EVALUATE TOPN(25, FILTER(VALUES({reference}), CONTAINSSTRING({reference}, \"{searchText.Replace("\"", "\"\"")}\")), {reference}, ASC) ORDER BY {reference}";
         var result = await dax.ExecuteAsync(user, query, cancellationToken);
         var values = result.Rows.Select(row => row[0]).Where(value => value is not null).ToArray();
-        var note = values.Length == 0 ? "No matching values are visible to this user." : null;
-        return new ToolResult(JsonSerializer.Serialize(new { table, column, values, note }), Table: result, Dax: query);
+        if (values.Length > 0)
+            return new ToolResult(JsonSerializer.Serialize(new { table, column, values }), Table: result, Dax: query);
+
+        // No match: return the values this user can see in the column (still under RLS), so the
+        // model can map wording like "Customer B" to the stored value "B".
+        var visibleQuery = $"EVALUATE TOPN(25, VALUES({reference}), {reference}, ASC) ORDER BY {reference}";
+        var visible = await dax.ExecuteAsync(user, visibleQuery, cancellationToken);
+        var visibleValues = visible.Rows.Select(row => row[0]).Where(value => value is not null).ToArray();
+        var note = visibleValues.Length == 0
+            ? "This user can see no values in this column."
+            : "No value contains the search text. These are the values this user can see; use one of them if it matches the question, otherwise the value is not visible to this user.";
+        return new ToolResult(JsonSerializer.Serialize(new { table, column, values = Array.Empty<string>(), visibleValues, note }), Table: visible, Dax: visibleQuery);
     }
 
     private async Task<ToolResult> ExecuteDaxAsync(AppUser user, string query, CancellationToken cancellationToken)
