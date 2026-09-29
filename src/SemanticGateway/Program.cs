@@ -119,7 +119,7 @@ api.MapGet("/me", (ClaimsPrincipal principal, AppUserDirectory users, IOptions<F
 });
 
 // The portal chat streams its progress as newline-delimited JSON so the UI can show each step.
-api.MapPost("/chat", async (ChatRequest chat, HttpContext http, AppUserDirectory users, ChatAgent agent) =>
+api.MapPost("/chat", async (ChatRequest chat, HttpContext http, AppUserDirectory users, ChatAgent agent, ILogger<ChatAgent> log) =>
 {
     var user = users.Resolve(http.User);
     var json = new JsonSerializerOptions(JsonSerializerDefaults.Web);
@@ -137,6 +137,7 @@ api.MapPost("/chat", async (ChatRequest chat, HttpContext http, AppUserDirectory
     }
     catch (Exception error) when (error is not OperationCanceledException)
     {
+        log.LogError(error, "Chat failed for {User}.", user.Subject);
         await Write(new { type = "error", message = error.Message });
     }
 });

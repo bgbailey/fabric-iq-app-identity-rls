@@ -261,8 +261,8 @@ Also observed:
 
 - **Portal agent.** 6 to 10 s per question, measured right after a restart (carol 6.1 s, dan 8.0 s, erin's
   two-pair breakdown 9.7 s with 2 model calls). A background warmer keeps the schema and the Power BI and
-  Azure OpenAI tokens fresh, so idle time does not slow the next question. An "ignore the filters" request
-  took 16.4 s and still returned only dan's row. Before caching and warming, 25 to 92 s.
+  Azure OpenAI tokens fresh. An "ignore the filters" request took 16.4 s and still returned only dan's row.
+  Before caching and warming, 25 to 92 s.
 - **Out-of-scope question.** Dan asked about Customer A. The RLS-scoped value search found nothing, and the agent said so.
 - **GitHub Copilot CLI.** It returned Carol's two rows only.
 - **Embedded parity.** `Match`.
