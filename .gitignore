@@ -25,3 +25,7 @@ TestResults/
 **/node_modules/
 **/dist/
 *.budget.json
+
+# Local gateway settings (IDs for your environment) and the built portal
+appsettings.Local.json
+src/SemanticGateway/wwwroot/

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>SemanticGateway</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Apache.Arrow" Version="22.1.0" />
+    <PackageReference Include="Apache.Arrow.Compression" Version="22.1.0" />
+    <PackageReference Include="Azure.Identity" Version="1.17.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.20" />
+    <PackageReference Include="ModelContextProtocol.AspNetCore" Version="2.2.0" />
+  </ItemGroup>
+
+</Project>

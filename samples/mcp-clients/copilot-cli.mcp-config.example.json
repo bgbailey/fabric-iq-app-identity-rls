@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "isv-gateway": {
+      "type": "http",
+      "url": "http://localhost:5187/mcp",
+      "headers": { "Authorization": "Bearer <token from /dev-idp/token or your identity provider>" },
+      "tools": [ "*" ]
+    }
+  }
+}

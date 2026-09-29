@@ -1,0 +1,8 @@
+[
+  { "subject": "alice", "displayName": "Alice — Customer A (Home)", "userKey": "app-user-A1" },
+  { "subject": "bob", "displayName": "Bob — Customer A (Auto)", "userKey": "app-user-A2" },
+  { "subject": "carol", "displayName": "Carol — Customer A (Home + Auto)", "userKey": "app-user-A3" },
+  { "subject": "dan", "displayName": "Dan — Customer B (Home)", "userKey": "app-user-B1" },
+  { "subject": "erin", "displayName": "Erin — Customer A Home + Customer B Auto", "userKey": "app-user-pairs" },
+  { "subject": "frank", "displayName": "Frank — No access", "userKey": "app-user-none" }
+]

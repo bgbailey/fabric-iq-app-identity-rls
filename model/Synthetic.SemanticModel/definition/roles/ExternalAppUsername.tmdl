@@ -1,0 +1,27 @@
+/// Experimental application role for reusing USERNAME-based RLS semantics.
+/// The broker supplies effectiveUsername; live service-principal behavior is still TBD.
+role ExternalAppUsername
+	modelPermission: read
+
+	tablePermission Scope = ```
+			VAR _subject = USERNAME()
+			VAR _scope = 'Scope'[Scope Key]
+			RETURN
+			    NOT ISBLANK(_subject)
+			        && _subject <> ""
+			        && COUNTROWS(
+			            FILTER(
+			                'User Access',
+			                EXACT('User Access'[Subject Key], _subject)
+			                    && 'User Access'[Scope Key] == _scope
+			            )
+			        ) > 0
+			```
+
+	tablePermission 'User Access' = ```
+			VAR _subject = USERNAME()
+			RETURN
+			    NOT ISBLANK(_subject)
+			        && _subject <> ""
+			        && EXACT('User Access'[Subject Key], _subject)
+			```

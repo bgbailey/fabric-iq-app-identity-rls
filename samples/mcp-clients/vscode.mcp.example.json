@@ -1,0 +1,12 @@
+{
+  "inputs": [
+    { "type": "promptString", "id": "gateway-token", "description": "Gateway bearer token", "password": true }
+  ],
+  "servers": {
+    "isv-gateway": {
+      "type": "http",
+      "url": "http://localhost:5187/mcp",
+      "headers": { "Authorization": "Bearer ${input:gateway-token}" }
+    }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "AuthorizedActivityTable",
+  "position": { "x": 40, "y": 40, "z": 1000, "height": 620, "width": 1200, "tabOrder": 1000 },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Scope" } }, "Property": "Customer" } },
+              "queryRef": "Scope.Customer",
+              "nativeQueryRef": "Customer"
+            },
+            {
+              "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Scope" } }, "Property": "Product" } },
+              "queryRef": "Scope.Product",
+              "nativeQueryRef": "Product"
+            },
+            {
+              "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Activity" } }, "Property": "Total Amount" } },
+              "queryRef": "Activity.Total Amount",
+              "nativeQueryRef": "Total Amount"
+            },
+            {
+              "field": { "Measure": { "Expression": { "SourceRef": { "Entity": "Activity" } }, "Property": "Activity Count" } },
+              "queryRef": "Activity.Activity Count",
+              "nativeQueryRef": "Activity Count"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Scope" } }, "Property": "Customer" } },
+            "direction": "Ascending"
+          },
+          {
+            "field": { "Column": { "Expression": { "SourceRef": { "Entity": "Scope" } }, "Property": "Product" } },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {
+            "columnAdjustment": { "expr": { "Literal": { "Value": "'growToFit'" } } },
+            "autoSizeColumnWidth": { "expr": { "Literal": { "Value": "true" } } }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": { "expr": { "Literal": { "Value": "true" } } },
+            "text": { "expr": { "Literal": { "Value": "'Authorized activity by customer and product'" } } },
+            "fontSize": { "expr": { "Literal": { "Value": "14D" } } }
+          }
+        }
+      ]
+    }
+  }
+}
