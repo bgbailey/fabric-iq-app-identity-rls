@@ -147,6 +147,12 @@ endpoint and the portal agent.
 No tool accepts a user, role, key or model ID as an argument. The user always comes from the validated
 token. In the live run, an extra `userKey` argument injected into `execute_dax` was ignored.
 
+For agents connecting over MCP, the bundled
+[semantic-gateway skill](.github/skills/semantic-gateway/SKILL.md) is a simplified FabricIQ workflow
+adapted to these three tools: schema, scoped value lookup, DAX and a grounded answer. It does not
+call native IQ data-query tools or supply identity arguments.
+[Using the skill with an MCP client](docs/mcp-clients.md#companion-analytics-skill).
+
 ## How the semantic model enforces access
 
 The gateway sends `roles: ["ExternalAppScope"]` and `customData: "<user key>"` with every query. The
@@ -317,6 +323,7 @@ Prerequisites: .NET 8 SDK, Node.js 24+, PowerShell 7, Azure CLI.
 | [model/](model/) | Synthetic TMDL semantic model with the RLS roles, and a one-visual PBIR report for the Embedded comparison. |
 | [scripts/](scripts/) | Setup: deploy the model and report, create the app identity and metadata client, grant workspace access, Azure OpenAI Bicep. |
 | [samples/](samples/) | Synthetic users and MCP client configuration examples. |
+| [.github/skills/semantic-gateway/](.github/skills/semantic-gateway/) | Companion agent skill: a simplified FabricIQ query workflow using only the gateway's three tools. |
 | [docs/](docs/) | [Architecture, app integration and auth flow](docs/architecture.md), MCP client guide, Power BI Embedded comparison, live evidence. |
 | [dev/](dev/) | Verification used while building: a 42-check live RLS harness, unit tests and a TMDL validator. Not needed to run the sample. |
 

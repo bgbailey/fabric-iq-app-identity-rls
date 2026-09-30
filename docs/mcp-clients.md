@@ -51,6 +51,42 @@ What happened in the live run for `carol`:
 
 To make the server permanent, add the same entry to `~/.copilot/mcp-config.json`.
 
+### Companion analytics skill
+
+[semantic-gateway](../.github/skills/semantic-gateway/SKILL.md) is a lightweight adaptation of
+the upstream [FabricIQ skill](https://github.com/microsoft/skills-for-fabric/tree/main/skills/fabriciq).
+It teaches the calling agent to read the schema, resolve visible values, generate DAX and explain
+the results using **this gateway**, not the native Fabric IQ data-query tools.
+
+Copilot CLI and VS Code discover it as a project skill when you work in this repository.
+With the gateway connection configured, ask:
+
+```text
+Use the semantic-gateway skill to break down my activity by customer and product.
+```
+
+For the CLI, the same authenticated config from the preceding section works:
+
+```powershell
+copilot --additional-mcp-config "@C:\path\to\mcp-config.json" --allow-tool isv-gateway `
+  -p "Use the semantic-gateway skill to break down my activity by customer and product."
+```
+
+For use outside this repository, copy the `semantic-gateway` folder to
+`$HOME\.copilot\skills\semantic-gateway` (Copilot), or your client's supported skill directory.
+Install it once; do not keep stale project and personal copies with the same name.
+Authentication remains a separate client configuration step. Never put a token in the skill.
+
+The skill deliberately leaves out artifact discovery, report filters, multi-model selection and
+the native IQ tools: the gateway is configured for one model and exposes only the three tools
+above. Client-visible arguments never choose a user, model, role or key. The skill is query
+guidance, not the mechanism that enforces RLS.
+
+The **portal agent does not automatically load `SKILL.md`**. It already uses the same three
+tool implementations, preloads the schema and has its own instructions in
+[ChatAgent.cs](../src/SemanticGateway/Chat/ChatAgent.cs). This companion is for agents connecting
+through MCP; adding it does not change the portal's prompts or claim new OAuth/client coverage.
+
 ## 3. VS Code (configuration example, not tested here)
 
 `.vscode/mcp.json` can prompt for the token instead of storing it:
