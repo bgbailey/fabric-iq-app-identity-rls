@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile data-diagram-profile="technical-light" host="fabric-architect" type="device">
+  <diagram data-air-schema="2" data-air-rails="[]" id="comparison-page" name="Same RLS, two carriers">
+    <mxGraphModel grid="1" gridSize="10" guides="1" connect="1" arrows="1" page="1" pageScale="1" pageWidth="1400" pageHeight="860" background="#FFFFFF">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell data-air-decoration="1" id="title" value="Same RLS, two carriers" vertex="1" parent="1" style="text;html=1;whiteSpace=wrap;fillColor=none;strokeColor=none;align=left;verticalAlign=middle;fontSize=44;fontStyle=1;spacing=0;fontColor=#29353D;fontFamily=Segoe UI;">
+          <mxGeometry as="geometry" x="40" y="24" width="1320" height="66" />
+        </mxCell>
+        <mxCell data-air-type="zone" data-air-id="comparison" data-air-key="air-id:comparison" data-air-kind="consumer" data-style-role="zone" id="zone-comparison" value="CustomData mode" vertex="1" parent="1" style="rounded=0;html=1;whiteSpace=wrap;fillColor=none;strokeColor=none;align=left;verticalAlign=top;spacing=0;fontSize=28;fontColor=#29353D;container=1;collapsible=0;fontFamily=Segoe UI;">
+          <mxGeometry as="geometry" x="40" y="105" width="1320" height="630" />
+        </mxCell>
+        <mxCell data-air-type="node" data-air-id="backend" data-air-key="air-id:backend" data-air-service="" id="node-backend" value="Your backend: same user key + RLS role + service principal&lt;br&gt;&lt;span style=&quot;font-size:28px;font-weight:400;&quot;&gt;Service-principal bearer stays here&lt;/span&gt;" vertex="1" parent="zone-comparison" style="rounded=0;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;spacing=14;fontSize=32;fontStyle=1;fontColor=#29353D;fillColor=#ECECEA;strokeColor=none;strokeWidth=1.5;fontFamily=Segoe UI;">
+          <mxGeometry as="geometry" x="0" y="45" width="1320" height="112" />
+        </mxCell>
+        <mxCell data-air-type="node" data-air-id="generate" data-air-key="air-id:generate" data-air-service="" id="node-generate" value="GenerateToken&lt;br&gt;&lt;span style=&quot;font-size:28px;font-weight:400;&quot;&gt;Identity at token issue&lt;/span&gt;" vertex="1" parent="zone-comparison" style="rounded=0;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;spacing=14;fontSize=36;fontStyle=1;fontColor=#29353D;fillColor=#FFFFFF;strokeColor=#D2D2D2;strokeWidth=1.5;fontFamily=Segoe UI;">
+          <mxGeometry as="geometry" x="0" y="230" width="610" height="106" />
+        </mxCell>
+        <mxCell data-air-type="node" data-air-id="embed" data-air-key="air-id:embed" data-air-service="" id="node-embed" value="Embed token to report&lt;br&gt;&lt;span style=&quot;font-size:28px;font-weight:400;&quot;&gt;Browser queries model&lt;/span&gt;" vertex="1" parent="zone-comparison" style="rounded=0;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;spacing=14;fontSize=36;fontStyle=1;fontColor=#29353D;fillColor=#EEF6FD;strokeColor=#0078D4;strokeWidth=1.5;fontFamily=Segoe UI;">
+          <mxGeometry as="geometry" x="0" y="400" width="610" height="106" />
+        </mxCell>
+        <mxCell data-air-type="node" data-air-id="query-carrier" data-air-key="air-id:query-carrier" data-air-service="" id="node-query-carrier" value="Query with roles + customData" vertex="1" parent="zone-comparison" style="rounded=0;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;spacing=14;fontSize=36;fontStyle=1;fontColor=#29353D;fillColor=#EEF6FD;strokeColor=#0078D4;strokeWidth=1.5;fontFamily=Segoe UI;">
+          <mxGeometry as="geometry" x="710" y="230" width="610" height="106" />
+        </mxCell>
+        <mxCell data-air-type="node" data-air-id="execute" data-air-key="air-id:execute" data-air-service="" id="node-execute" value="executeDaxQueries&lt;br&gt;&lt;span style=&quot;font-size:28px;font-weight:400;&quot;&gt;User context on every query&lt;/span&gt;" vertex="1" parent="zone-comparison" style="rounded=0;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;spacing=14;fontSize=36;fontStyle=1;fontColor=#29353D;fillColor=#FFFFFF;strokeColor=#D2D2D2;strokeWidth=1.5;fontFamily=Segoe UI;">
+          <mxGeometry as="geometry" x="710" y="400" width="610" height="106" />
+        </mxCell>
+        <mxCell data-air-type="node" data-air-id="model" data-air-key="air-id:model" data-air-service="" id="node-model" value="Same semantic model / CUSTOMDATA() / same grants" vertex="1" parent="zone-comparison" style="rounded=0;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;spacing=14;fontSize=32;fontStyle=1;fontColor=#29353D;fillColor=#ECECEA;strokeColor=none;strokeWidth=1.5;fontFamily=Segoe UI;">
+          <mxGeometry as="geometry" x="0" y="554" width="1320" height="76" />
+        </mxCell>
+        <mxCell data-air-decoration="1" id="heading-embedded" value="Existing Embedded" vertex="1" parent="zone-comparison" style="text;html=1;whiteSpace=wrap;fillColor=none;strokeColor=none;align=center;verticalAlign=middle;fontSize=32;fontStyle=1;spacing=0;fontColor=#29353D;fontFamily=Segoe UI;">
+          <mxGeometry as="geometry" x="0" y="184" width="610" height="42" />
+        </mxCell>
+        <mxCell data-air-decoration="1" id="heading-ai" value="Added AI chat" vertex="1" parent="zone-comparison" style="text;html=1;whiteSpace=wrap;fillColor=none;strokeColor=none;align=center;verticalAlign=middle;fontSize=32;fontStyle=1;spacing=0;fontColor=#29353D;fontFamily=Segoe UI;">
+          <mxGeometry as="geometry" x="710" y="184" width="610" height="42" />
+        </mxCell>
+        <mxCell data-air-decoration="1" id="takeaway" value="Reuse the RLS policy, not the embed token." vertex="1" parent="1" style="text;html=1;whiteSpace=wrap;fillColor=none;strokeColor=none;align=center;verticalAlign=middle;fontSize=36;fontStyle=1;spacing=0;fontColor=#29353D;fontFamily=Segoe UI;">
+          <mxGeometry as="geometry" x="40" y="777" width="1320" height="60" />
+        </mxCell>
+        <mxCell data-air-type="edge" data-air-id="id:embed-carrier" data-air-key="air-id:id:embed-carrier" data-air-kind="identity" id="edge-embed-carrier" value="" edge="1" parent="zone-comparison" source="node-generate" target="node-embed" style="edgeStyle=none;rounded=0;html=1;endArrow=open;endFill=0;strokeColor=#6B7780;strokeWidth=2;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitPerimeter=1;entryPerimeter=1;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell data-air-type="edge" data-air-id="id:ai-query" data-air-key="air-id:id:ai-query" data-air-kind="query" id="edge-ai-query" value="" edge="1" parent="zone-comparison" source="node-query-carrier" target="node-execute" style="edgeStyle=none;rounded=0;html=1;endArrow=open;endFill=0;strokeColor=#6B7780;strokeWidth=2;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitPerimeter=1;entryPerimeter=1;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell data-air-decoration="1" id="concept-qualifier" value="Concept comparison" vertex="1" parent="1" style="text;html=1;whiteSpace=wrap;align=right;verticalAlign=middle;fillColor=none;strokeColor=none;spacing=0;fontSize=28;fontFamily=Segoe UI;fontColor=#29353D;">
+          <mxGeometry as="geometry" x="1000" y="99" width="360" height="40" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

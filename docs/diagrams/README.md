@@ -1,4 +1,45 @@
-# Shared RLS architecture
+# Diagrams: start with the concepts
+
+| Question | Simple view | Editable source |
+|---|---|---|
+| What is off the shelf, and what do we build? | [Reuse vs custom](../images/reuse-vs-custom.png) | [draw.io](reuse-vs-custom.drawio) |
+| How does the AI path resemble Embedded? | [Same RLS, two carriers](../images/same-rls-two-carriers.png) | [draw.io](same-rls-two-carriers.drawio) |
+| Where does each detailed identity/API flow go? | [Full architecture](../images/shared-rls-architecture.png) | [draw.io](shared-rls-architecture.drawio) |
+
+The first two views deliberately explain one idea each. The full architecture is a technical
+drill-down, not the recommended first customer view. The
+[code and security walkthrough](../embedded-ai-walkthrough.md) connects the simple views to actual
+tool calls, request bodies, and shared implementation.
+
+## Simple concepts: sources and review
+
+| View | Editable logical source | Exact rendered review | Clarity |
+|---|---|---|---|
+| Reuse vs custom | [AIR](reuse-vs-custom.air.json) | [Astra review](reuse-vs-custom.review.json) | Four boxes, three arrows; separates the custom identity adapter from reused Microsoft services and the official SDK. |
+| Same RLS, two carriers | [AIR](same-rls-two-carriers.air.json) | [Astra review](same-rls-two-carriers.review.json) | Two aligned lanes; the backend and model stay shared while the identity carrier changes. |
+
+**Both concepts passed observed GPT-6 Astra author/render review with no findings**, fresh render
+binding, and native draw.io editability gates. They were inspected at 900px README width. Node/group
+movement, child/connector preservation, and label edit/Undo were exercised in actual editor sessions.
+The published diagrams are the unchanged approved source artifacts.
+
+The reviewed native diagram SHA-256 values are:
+
+```text
+reuse-vs-custom.drawio
+34ab7a4d1a9f72f234d76bace97f3d3668b9ddcb438ccbbc5753ed470b91b22b
+
+same-rls-two-carriers.drawio
+6daa817cd501e69d0e7b825c5b19a234512146568934e5e9dbf119afd509fa60
+```
+
+These are explanatory source views, not a new live deployment test. Their wording is grounded in the
+implemented `CustomData` path and the Microsoft contracts below. The concepts use neutral native
+shapes, not new or altered product logos. The diagram-review scope did not replay the separate
+[dated live report/AI evidence](../evidence/live-validation-2026-10-05.md); its existing synthetic
+results remain the live qualification.
+
+## Detailed architecture
 
 **View:** high-level logical architecture of the implemented `CUSTOMDATA()` path.
 
@@ -8,11 +49,11 @@
 
 ![Shared RLS for reports and AI](../images/shared-rls-architecture.png)
 
-## Files
+### Files
 
 | File | Purpose |
 |---|---|
-| [Full-size PNG](../images/shared-rls-architecture.png) | README/customer-readable overview. |
+| [Full-size PNG](../images/shared-rls-architecture.png) | Detailed technical overview. |
 | [Native draw.io diagram](shared-rls-architecture.drawio) | Editable nodes, ownership containers, labels, and attached connectors; self-contained icons. |
 | [Architecture definition](shared-rls-architecture.air.json) | Logical graph and source/assumption inventory. |
 | [Astra rendered review](shared-rls-architecture.review.json) | Findings for the exact published diagram. |
@@ -20,7 +61,7 @@
 Open the `.drawio` file in draw.io Desktop or a compatible editor. Labels and connectors are native
 objects, not an architecture-sized bitmap. Icons retain their original artwork.
 
-## Read the diagram
+### Read the detailed diagram
 
 The boundaries represent **ownership**, not subnets or deployment topology. Solid arrows are
 API/tool/query/control calls; dashed arrows represent identity or token carriers.
@@ -43,7 +84,7 @@ The portal's `/api/chat` agent invokes the shared tools in-process; external age
 Optional Azure OpenAI inference uses a separate gateway Azure identity, not the Power BI service
 principal's credential.
 
-## Sources
+### Sources
 
 | Contract | Current Microsoft documentation | Implemented source |
 |---|---|---|
@@ -56,7 +97,7 @@ principal's credential.
 The API documentation above was retrieved on 2026-10-05. The diagram adds no capability based merely
 on an icon or a generic architecture pattern.
 
-## Review and editability
+### Review and editability
 
 GPT-6 Astra authored the logical graph and reviewed the exact rendered diagram. The model-observation,
 render-binding, and final gate checks passed. Native draw.io round-trip and actual mouse/keyboard
@@ -75,7 +116,7 @@ Structural/visual review does not certify a deployment. The diagram's "illustrat
 overview" qualification refers to that distinction; the sample's separate
 [live evidence](../evidence/live-validation-2026-10-05.md) records the synthetic report/AI rehearsal.
 
-## Evidence gaps / still thin
+### Evidence gaps / still thin
 
 - A deployment must qualify its identity mapping, certificate, tenant settings, workspace Admin access
   for role-bearing service-principal queries, model role, and grants.

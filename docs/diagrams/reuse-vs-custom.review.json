@@ -1,0 +1,9 @@
+{
+  "reviewed_pages": [
+    "Reuse concept"
+  ],
+  "findings": [],
+  "summary": "Reuse concept: The render matches AIR and the layout inventory: four components, three correctly directed arrows, and all required annotations. Labels are legible; no clipping, overlaps, misleading boundaries, or inaccessible contrast are apparent. The logical-concept/non-deployment qualifier visibly communicates illustrative scope. Evidence gaps: implementation and deployment accuracy are not independently verified. No product artwork is depicted, so asset origin/freshness review is not applicable.",
+  "passed": true,
+  "diagram_sha256": "34ab7a4d1a9f72f234d76bace97f3d3668b9ddcb438ccbbc5753ed470b91b22b"
+}

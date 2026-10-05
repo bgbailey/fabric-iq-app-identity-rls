@@ -1,0 +1,162 @@
+{
+  "title": "Same RLS, two carriers",
+  "audience": "general",
+  "pattern": "custom",
+  "template_id": null,
+  "template_version": null,
+  "assumptions": [
+    "This comparison represents the implemented logical CustomData-mode paths at source commit 799ab92, based on caller-supplied source corroboration. It is not a claim of integrated live report/chat parity.",
+    "Scope is the configured CUSTOMDATA() role with exact grants. A pre-existing USERNAME()/UPN-based opaque-key role is not drop-in compatible.",
+    "Both DaxQueryClient and EmbedTokenService use the same PowerBiAppIdentity certificate service principal, trusted server-bound user key, fixed RLS role and semantic model.",
+    "The backend validates the app token, resolves AppUserDirectory.Resolve to trustedUserKey and chooses the fixed role. The service-principal OAuth bearer remains backend-only.",
+    "Existing Embedded names the comparison pattern; it does not claim that a browser report was demonstrated in this pilot.",
+    "The comparison zone is a text-only conceptual mode grouping, not a deployment, ownership or trust boundary. All six nodes are neutral conceptual boxes with null service_id; no catalog services were selected.",
+    "Render one hand-authored native draw.io comparison page with exactly six boxes and two unlabeled arrows. The shared backend and semantic-model bands require no edges.",
+    "Place decorative heading 'Existing Embedded' above generate/embed on the left and 'Added AI chat' above query-carrier/execute on the right. Render the decorative takeaway 'Reuse the RLS policy, not the embed token.' These texts are not additional nodes or rails.",
+    "Use technical-light standard styling, the microsoft-deck measured palette and large Segoe UI text readable at 900px. Keep visible text to at most 65 words excluding the title; use no icons, custom product artwork or PowerPoint.",
+    "Node notes, sources, assumptions and evidence gaps are metadata for the AIR/source sidecar, not additional visible figure text. Full identity JSON and the security comparison table remain outside the figure.",
+    "The two edges distinguish token issuance from query submission. Neither represents a data-copy pipeline; no additional data-movement, control, identity or reference routes are inferred.",
+    "No licensing, release-status, SSO, service-principal-profile, Native Fabric IQ or optional inference-identity claims are made."
+  ],
+  "evidence_gaps": [
+    "Integrated live report/chat parity is unverified; the supplied evidence establishes the implemented logical comparison, not an end-to-end browser-report and AI-chat demonstration.",
+    "Source corroboration at commit 799ab92 and Learn excerpts were supplied by the caller rather than independently inspected for this AIR.",
+    "Compatibility with other role definitions, including existing USERNAME()/UPN-based opaque-key roles, is not established by the configured CustomData path."
+  ],
+  "unresolved_services": [
+    {
+      "id": "backend",
+      "raw_mention": "Your backend: same user key + RLS role + service principal\nService-principal bearer stays here",
+      "guessed_category": null,
+      "proposed_label": "Your backend: same user key + RLS role + service principal\nService-principal bearer stays here",
+      "reason": "Auto-created for unresolved node with no matching catalog entry."
+    },
+    {
+      "id": "generate",
+      "raw_mention": "GenerateToken\nIdentity at token issue",
+      "guessed_category": null,
+      "proposed_label": "GenerateToken\nIdentity at token issue",
+      "reason": "Auto-created for unresolved node with no matching catalog entry."
+    },
+    {
+      "id": "embed",
+      "raw_mention": "Embed token to report\nBrowser queries model",
+      "guessed_category": null,
+      "proposed_label": "Embed token to report\nBrowser queries model",
+      "reason": "Auto-created for unresolved node with no matching catalog entry."
+    },
+    {
+      "id": "query-carrier",
+      "raw_mention": "Query with roles + customData",
+      "guessed_category": null,
+      "proposed_label": "Query with roles + customData",
+      "reason": "Auto-created for unresolved node with no matching catalog entry."
+    },
+    {
+      "id": "execute",
+      "raw_mention": "executeDaxQueries\nUser context on every query",
+      "guessed_category": null,
+      "proposed_label": "executeDaxQueries\nUser context on every query",
+      "reason": "Auto-created for unresolved node with no matching catalog entry."
+    },
+    {
+      "id": "model",
+      "raw_mention": "Same semantic model / CUSTOMDATA() / same grants",
+      "guessed_category": null,
+      "proposed_label": "Same semantic model / CUSTOMDATA() / same grants",
+      "reason": "Auto-created for unresolved node with no matching catalog entry."
+    }
+  ],
+  "sources": [
+    "https://learn.microsoft.com/en-us/rest/api/power-bi/datasets/execute-dax-queries-in-group",
+    "https://learn.microsoft.com/en-us/rest/api/power-bi/embed-token/generate-token",
+    "https://learn.microsoft.com/en-us/power-bi/developer/embedded/embed-tokens",
+    "https://learn.microsoft.com/en-us/power-bi/developer/embedded/cloud-rls"
+  ],
+  "catalog_version": "0.1.0",
+  "zones": [
+    {
+      "id": "comparison",
+      "label": "CustomData mode",
+      "kind": "consumer",
+      "parent_zone": null,
+      "style": "solid",
+      "description": "Conceptual comparison grouping only; it is not a deployment, ownership or trust boundary.",
+      "slot": null,
+      "position": null,
+      "children": [],
+      "min_nodes": 6,
+      "max_nodes": 6,
+      "node_layout": "grid"
+    }
+  ],
+  "security_annotations": [],
+  "nodes": [
+    {
+      "id": "backend",
+      "zone": "comparison",
+      "service_id": null,
+      "label": "Your backend: same user key + RLS role + service principal\nService-principal bearer stays here",
+      "notes": "Shared upper band. The backend validates the app token, resolves AppUserDirectory.Resolve to trustedUserKey and chooses the fixed RLS role. DaxQueryClient and EmbedTokenService share the PowerBiAppIdentity certificate service principal. Its OAuth bearer never reaches the browser. Caller-supplied corroboration: AppUsers lines 30-37 and PowerBiAppIdentity lines 16-26 at commit 799ab92.",
+      "is_optional": false
+    },
+    {
+      "id": "generate",
+      "zone": "comparison",
+      "service_id": null,
+      "label": "GenerateToken\nIdentity at token issue",
+      "notes": "Left lane, before embed. Effective identity carries username=userkey, roles containing the fixed RLS role, customData=userkey and datasets identifying the target semantic model; userkey is the trusted server-resolved key. GenerateToken scopes access and issues a distinct embed token; it does not execute a data query. Caller-supplied corroboration: EmbedTokenService lines 25-47 at commit 799ab92.",
+      "is_optional": false
+    },
+    {
+      "id": "embed",
+      "zone": "comparison",
+      "service_id": null,
+      "label": "Embed token to report\nBrowser queries model",
+      "notes": "Left lane, after generate. The browser receives the separately issued embed token, not the service-principal OAuth bearer. The embedded report queries the shared semantic model under the token's effective identity. This is the comparison pattern, not evidence of a browser report demonstrated in the pilot.",
+      "is_optional": false
+    },
+    {
+      "id": "query-carrier",
+      "zone": "comparison",
+      "service_id": null,
+      "label": "Query with roles + customData",
+      "notes": "Right lane, before execute. The backend prepares the AI query with roles:[fixedrole] and customData:trustedUserKey. The AI path does not use an embed token.",
+      "is_optional": false
+    },
+    {
+      "id": "execute",
+      "zone": "comparison",
+      "service_id": null,
+      "label": "executeDaxQueries\nUser context on every query",
+      "notes": "Right lane, after query-carrier. DaxQueryClient submits the query, fixed role and trusted user key as customData on every request, using the shared backend certificate service-principal identity. App-user context is supplied per query rather than carried in an embed token. Caller-supplied corroboration: DaxQueryClient lines 24-44 at commit 799ab92.",
+      "is_optional": false
+    },
+    {
+      "id": "model",
+      "zone": "comparison",
+      "service_id": null,
+      "label": "Same semantic model / CUSTOMDATA() / same grants",
+      "notes": "Shared lower band. Both configured logical paths reuse the same semantic-model RLS role, CUSTOMDATA() user-key evaluation and exact grants. This does not establish automatic compatibility with USERNAME()/UPN-based roles. Caller-supplied corroboration: role TMDL lines 7-27 at commit 799ab92.",
+      "is_optional": false
+    }
+  ],
+  "edges": [
+    {
+      "id": "embed-carrier",
+      "from": "generate",
+      "to": "embed",
+      "kind": "identity",
+      "label": null
+    },
+    {
+      "id": "ai-query",
+      "from": "query-carrier",
+      "to": "execute",
+      "kind": "query",
+      "label": null
+    }
+  ],
+  "rails": [],
+  "style_mode": "minimal"
+}

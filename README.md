@@ -25,7 +25,12 @@ both paths without changing the query's authorization rules.
 | `dan` | B/Home only | 700 across 1. A direct Customer A query using `ALL('Scope')` still returned no rows. |
 | `frank` | None | Valid empty results, not another user's data or a failed request disguised as zero. |
 
+<details>
+<summary>See the live same-user report and AI proof</summary>
+
 ![Same application user and RLS role in the Embedded report and AI chat, using synthetic data](docs/images/embedded-ai-same-rls.png)
+
+</details>
 
 The report comparison is a **baseline aggregate cross-check**, not certification of every AI answer or
 identical underlying rows. The live tests also queried the engine without customer filters to check
@@ -49,30 +54,54 @@ identity model:
 2. Direct delegated access requires its own identity and permission integration. This sample instead
    retains the application's sign-in, entitlement lookup, and gateway boundary.
 
-## The solution in one picture
+## Understand the solution in three steps
 
-The ISV runs a **Semantic Gateway MCP server**: a custom MCP server next to its product, and the only
-interface its AI clients use. It is an MCP server to your clients, an MCP client to Fabric IQ (schema only),
-and the point where every query gets the user's key. Full architecture, how to add it to your app and the
-user auth flow: [docs/architecture.md](docs/architecture.md).
+### 1. Reuse the platform; add an application-aware gateway
 
-![Architecture: delegated metadata through native Fabric IQ MCP, service-principal queries and Embedded tokens through Power BI REST, and the same CUSTOMDATA-based semantic-model RLS](docs/images/shared-rls-architecture.png)
+We do **not** modify Fabric IQ MCP or implement a new MCP protocol. The official MCP C# SDK provides
+the server/client transport. We implement the application-user mapping and three tool handlers.
 
-[Open full-size diagram](docs/images/shared-rls-architecture.png) ·
-[Editable draw.io source](docs/diagrams/shared-rls-architecture.drawio) ·
-[Sources, review, and limitations](docs/diagrams/README.md)
+![Concept: custom application-aware gateway reuses native Fabric IQ MCP for schema and Power BI REST with model RLS for data](docs/images/reuse-vs-custom.png)
 
-| Path | Identity and call | Where the user key goes |
+| Tool the AI sees in our custom gateway | What it calls underneath |
+|---|---|
+| `get_semantic_model_schema` | **Native Fabric IQ MCP** `GetSemanticModelSchema`, using a delegated metadata account; cached. |
+| `search_values` | **Power BI REST** `executeDaxQueries`, using the app's service principal and the user's RLS context. |
+| `execute_dax` | The **same Power BI query client and RLS context** used by `search_values`. |
+
+Native IQ `ExecuteQuery` and `ValueSearch` are **not** used in this path. They run as a delegated
+Fabric user, not as the ISV's opaque application-user key. The service principal does not sign in
+to IQ MCP.
+
+### 2. Reuse the RLS policy, not the embed token
+
+![Comparison: the same backend identity and RLS policy travel in an Embedded effective identity or in each AI query's customData request](docs/images/same-rls-two-carriers.png)
+
+**Embedded:** the backend supplies the user key and role when generating the report's embed token.
+
+**AI:** the backend supplies the same user key and role with every generated DAX query.
+
+Both use the same configured model role. `customData` carries the key; `CUSTOMDATA()` reads it inside
+that role. The service principal's OAuth bearer stays on the backend. The report's embed token is
+**not** an AI-query credential.
+
+### 3. Share the identity and security code; change the delivery path
+
+| Reused in this sample | Embedded report | AI query |
 |---|---|---|
-| **Schema** | Delegated metadata account → native Fabric IQ MCP `GetSemanticModelSchema` | No external-user key; shared filtered metadata. |
-| **AI data** | Custom `search_values` / `execute_dax` → certificate-backed service principal → Power BI REST `executeDaxQueries` | Request body: fixed `roles` and `customData = userKey`. |
-| **Embedded** | The same service principal → Power BI REST `GenerateToken` | Effective identity: the same role and `customData = userKey`; a distinct embed token goes to the browser. |
+| [User mapping](src/SemanticGateway/Identity/AppUsers.cs) | Authenticated subject → application user key. | Same mapping. |
+| [Power BI app identity](src/SemanticGateway/Fabric/PowerBiAppIdentity.cs) | Certificate-backed service principal. | Same credential component. |
+| [Model role and grants](model/Synthetic.SemanticModel/definition/roles/ExternalAppScope.tmdl) | `CUSTOMDATA()` enforces authorized scopes. | Same role and grants; no LLM-owned security filter. |
+| Request construction | [`GenerateToken` effective identity](src/SemanticGateway/Fabric/EmbedTokenService.cs). | [`executeDaxQueries` body](src/SemanticGateway/Fabric/DaxQueryClient.cs). This is the delivery difference. |
 
-**The service principal does not authenticate to Fabric IQ MCP.** `customData` is query/effective-identity
-content, not a claim in its OAuth token. The semantic model reads it through `CUSTOMDATA()` and applies
-the same configured grants to reports and AI queries.
+This is the demonstrated `CUSTOMDATA()` route. An existing opaque-username `USERNAME()` role may need
+adaptation, and role-bearing service-principal queries require workspace Admin access.
 
-The authorization boundary is explicit:
+[Follow one user through the calls and actual payloads](docs/embedded-ai-walkthrough.md) ·
+[Editable concept diagrams and sources](docs/diagrams/README.md) ·
+[Detailed architecture](docs/images/shared-rls-architecture.png)
+
+The security division remains:
 
 > **Your identity provider decides who is asking. The gateway attaches that user's key to every query.
 > The semantic model decides which rows they may query.**
@@ -86,6 +115,8 @@ RLS does not make an unsupported or fabricated answer correct.
 
 - [Architecture, app integration and auth flow](docs/architecture.md)
 - [Start with the Embedded experience](#start-with-the-embedded-experience)
+- [Understand the solution in three steps](#understand-the-solution-in-three-steps)
+- [One user, two calls: code and security walkthrough](docs/embedded-ai-walkthrough.md)
 - [How a question flows](#how-a-question-flows)
 - [The three tools](#the-three-tools)
 - [How the semantic model enforces access](#how-the-semantic-model-enforces-access)
@@ -235,19 +266,9 @@ feature of the supplied portal. The demonstrated external client uses a pre-issu
 
 ## Relationship to Power BI Embedded
 
-This is the **app owns data** idea applied to AI queries. If you already embed Power BI this way, most
-of your design carries over.
-
-| Aspect | Power BI Embedded, app owns data | This gateway | Relationship |
-|---|---|---|---|
-| Who signs the user in | Your app, any identity provider | Your app, any identity provider | **Same** |
-| Who calls Power BI | Service principal | The same service principal | **Same** (needs workspace Admin for `roles`) |
-| Who decides access | Your backend | Your backend | **Same** |
-| How the user reaches RLS | `GenerateToken` effective identity: `username`, `roles`, `customData` | Every `executeDaxQueries` call: `roles`, `customData` | **Same idea, different carrier** |
-| Where RLS runs | A semantic-model role | The same role | **Same**, if the role reads `CUSTOMDATA()` |
-| Browser token | Embed token | None; the browser only holds your app's token | **Not used** |
-| Query author | Report visuals, designed in advance | An LLM, per question | **Differs** |
-| Semantic context | Not needed | Fabric IQ schema, through a metadata account | **New** |
+This is the **app owns data** idea applied to AI queries. The
+[two-carrier comparison](#2-reuse-the-rls-policy-not-the-embed-token) shows what stays the same.
+The [code walkthrough](docs/embedded-ai-walkthrough.md) shows the identity fields side by side.
 
 Measured, not assumed:
 

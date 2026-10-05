@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile data-diagram-profile="technical-light" host="fabric-architect" type="device">
+  <diagram data-air-schema="2" data-air-rails="[]" id="reuse-concept" name="Reuse concept">
+    <mxGraphModel grid="1" gridSize="10" guides="1" connect="1" page="1" pageScale="1" pageWidth="1600" pageHeight="720" background="#FFFFFF">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell data-air-decoration="1" id="title" value="Off-the-shelf components; application-aware adapter" vertex="1" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=42;fontStyle=1;spacing=0;fillColor=none;strokeColor=none;fontFamily=Segoe UI;fontColor=#29353D;">
+          <mxGeometry as="geometry" x="40" y="26" width="1520" height="64" />
+        </mxCell>
+        <mxCell data-air-type="zone" data-air-id="concept" data-air-key="air-id:concept" data-air-kind="consumer" id="zone-concept" value="" vertex="1" parent="1" style="group;html=1;fillColor=none;strokeColor=none;container=1;collapsible=0;fontFamily=Segoe UI;fontColor=#29353D;">
+          <mxGeometry as="geometry" x="40" y="130" width="1520" height="405" />
+        </mxCell>
+        <mxCell data-air-type="node" data-air-id="client" data-air-key="air-id:client" data-air-service="" id="node-client" value="Application / AI client" vertex="1" parent="zone-concept" style="rounded=0;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=32;fontStyle=1;spacing=18;fillColor=#FFFFFF;strokeColor=#3A4953;strokeWidth=2;fontFamily=Segoe UI;fontColor=#29353D;">
+          <mxGeometry as="geometry" x="0" y="135" width="255" height="155" />
+        </mxCell>
+        <mxCell data-air-type="node" data-air-id="gateway" data-air-key="air-id:gateway" data-air-service="" id="node-gateway" value="&lt;span style=&quot;font-size:27px;color:#0078D4;font-weight:600&quot;&gt;Built&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:34px;font-weight:600&quot;&gt;Custom app-aware&lt;br&gt;MCP gateway&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:28px&quot;&gt;Binds trusted app user key&lt;/span&gt;" vertex="1" parent="zone-concept" style="rounded=0;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=32;fontStyle=0;spacing=18;fillColor=#FFFFFF;strokeColor=#0078D4;strokeWidth=2;fontFamily=Segoe UI;fontColor=#29353D;">
+          <mxGeometry as="geometry" x="390" y="80" width="420" height="265" />
+        </mxCell>
+        <mxCell data-air-type="node" data-air-id="native-schema" data-air-key="air-id:native-schema" data-air-service="" id="node-native-schema" value="&lt;span style=&quot;font-size:27px;color:#0078D4;font-weight:600&quot;&gt;Reused&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:32px;font-weight:600&quot;&gt;Native Fabric IQ MCP&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:28px&quot;&gt;Schema only&lt;br&gt;Delegated metadata account&lt;/span&gt;" vertex="1" parent="zone-concept" style="rounded=0;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=32;fontStyle=0;spacing=18;fillColor=#FFFFFF;strokeColor=#3A4953;strokeWidth=2;fontFamily=Segoe UI;fontColor=#29353D;">
+          <mxGeometry as="geometry" x="960" y="0" width="560" height="185" />
+        </mxCell>
+        <mxCell data-air-type="node" data-air-id="powerbi-rls" data-air-key="air-id:powerbi-rls" data-air-service="" id="node-powerbi-rls" value="&lt;span style=&quot;font-size:27px;color:#0078D4;font-weight:600&quot;&gt;Reused&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:32px;font-weight:600&quot;&gt;Power BI REST + model RLS&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:28px&quot;&gt;Data + reports&lt;br&gt;Service principal&lt;/span&gt;" vertex="1" parent="zone-concept" style="rounded=0;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=32;fontStyle=0;spacing=18;fillColor=#FFFFFF;strokeColor=#3A4953;strokeWidth=2;fontFamily=Segoe UI;fontColor=#29353D;">
+          <mxGeometry as="geometry" x="960" y="220" width="560" height="185" />
+        </mxCell>
+        <mxCell data-air-type="edge" data-air-id="id:client-gateway" data-air-key="air-id:id:client-gateway" data-air-kind="control" id="edge-client-gateway" value="" edge="1" parent="zone-concept" source="node-client" target="node-gateway" style="edgeStyle=none;rounded=0;html=1;endArrow=open;endFill=0;strokeWidth=2;strokeColor=#3A4953;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0;entryY=0.5;entryPerimeter=0;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell data-air-type="edge" data-air-id="id:gateway-schema" data-air-key="air-id:id:gateway-schema" data-air-kind="query" id="edge-gateway-schema" value="" edge="1" parent="zone-concept" source="node-gateway" target="node-native-schema" style="edgeStyle=none;rounded=0;html=1;endArrow=open;endFill=0;strokeWidth=2;strokeColor=#3A4953;exitX=1;exitY=0.27;exitPerimeter=0;entryX=0;entryY=0.5;entryPerimeter=0;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell data-air-type="edge" data-air-id="id:gateway-data" data-air-key="air-id:id:gateway-data" data-air-kind="query" id="edge-gateway-data" value="" edge="1" parent="zone-concept" source="node-gateway" target="node-powerbi-rls" style="edgeStyle=none;rounded=0;html=1;endArrow=open;endFill=0;strokeWidth=2;strokeColor=#3A4953;exitX=1;exitY=0.73;exitPerimeter=0;entryX=0;entryY=0.5;entryPerimeter=0;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell data-air-decoration="1" id="sdk-note" value="MCP protocol, server and client: official C# SDK" vertex="1" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=29;fontStyle=0;spacing=0;fillColor=none;strokeColor=none;fontFamily=Segoe UI;fontColor=#29353D;">
+          <mxGeometry as="geometry" x="40" y="565" width="1520" height="46" />
+        </mxCell>
+        <mxCell data-air-decoration="1" id="takeaway" value="Reuse platform security; add application identity binding." vertex="1" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=32;fontStyle=1;spacing=0;fillColor=none;strokeColor=none;fontFamily=Segoe UI;fontColor=#29353D;">
+          <mxGeometry as="geometry" x="40" y="621" width="1520" height="46" />
+        </mxCell>
+        <mxCell data-air-decoration="1" id="qualifier" value="Logical concept · source-backed, not deployment proof" vertex="1" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=25;fontStyle=0;spacing=0;fillColor=none;strokeColor=none;fontFamily=Segoe UI;fontColor=#29353D;">
+          <mxGeometry as="geometry" x="40" y="683" width="1520" height="30" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

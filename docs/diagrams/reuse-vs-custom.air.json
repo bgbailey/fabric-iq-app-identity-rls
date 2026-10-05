@@ -1,0 +1,129 @@
+{
+  "title": "Off-the-shelf components; application-aware adapter",
+  "audience": "customer README concept",
+  "pattern": "custom",
+  "template_id": null,
+  "template_version": null,
+  "assumptions": [
+    "Source-backed logical concept of implemented source at commits 84b9d80 and 799ab92, not deployed-environment validation. Null service IDs denote approved conceptual/composite components.",
+    "Presentation uses neutral boxes without product artwork, a white background, INK #29353D, restrained Microsoft blue #0078D4 and large typography readable at 900px. Three straight neutral arrows are unlabeled; visible text stays below 65 words excluding the title.",
+    "Renderer-only annotations, not nodes or edges: bottom note 'MCP protocol, server and client: official C# SDK'; takeaway 'Reuse platform security; add application identity binding.'; qualifier 'Logical concept \u00b7 source-backed, not deployment proof'. Technical notes remain outside the image."
+  ],
+  "evidence_gaps": [
+    "Repository behavior relies on coordinator-provided commit evidence, not independent code inspection by this rendering task.",
+    "The supplied evidence does not establish deployed-environment configuration or end-to-end deployment validation."
+  ],
+  "unresolved_services": [
+    {
+      "id": "client",
+      "raw_mention": "Application / AI client",
+      "guessed_category": null,
+      "proposed_label": "Application / AI client",
+      "reason": "Approved neutral concept component after prior discovery."
+    },
+    {
+      "id": "gateway",
+      "raw_mention": "Custom app-aware MCP gateway",
+      "guessed_category": null,
+      "proposed_label": "Built\nCustom app-aware\nMCP gateway\nBinds trusted app user key",
+      "reason": "Approved neutral concept component after prior discovery."
+    },
+    {
+      "id": "native-schema",
+      "raw_mention": "Native Fabric IQ MCP",
+      "guessed_category": null,
+      "proposed_label": "Reused\nNative Fabric IQ MCP\nSchema only\nDelegated metadata account",
+      "reason": "Approved neutral concept component after prior discovery."
+    },
+    {
+      "id": "powerbi-rls",
+      "raw_mention": "Power BI REST + model RLS",
+      "guessed_category": null,
+      "proposed_label": "Reused\nPower BI REST + model RLS\nData + reports\nService principal",
+      "reason": "Approved neutral concept component after prior discovery."
+    }
+  ],
+  "sources": [
+    "https://learn.microsoft.com/en-us/fabric/iq/connectors/fabric-iq-mcp",
+    "https://learn.microsoft.com/en-us/rest/api/power-bi/datasets/execute-dax-queries-in-group",
+    "https://learn.microsoft.com/en-us/rest/api/power-bi/embed-token/generate-token",
+    "urn:repo:fabric-iq-app-identity-rls:84b9d80+799ab92"
+  ],
+  "catalog_version": "0.1.0",
+  "zones": [
+    {
+      "id": "concept",
+      "label": "",
+      "kind": "consumer",
+      "parent_zone": null,
+      "style": "solid",
+      "description": "Unpainted structural native-editor group only, not an ownership, deployment or security boundary. Edges express control or query intent, not data movement, identity flows or references.",
+      "slot": null,
+      "position": null,
+      "children": [],
+      "min_nodes": 4,
+      "max_nodes": 4,
+      "node_layout": "horizontal"
+    }
+  ],
+  "security_annotations": [],
+  "nodes": [
+    {
+      "id": "client",
+      "zone": "concept",
+      "service_id": null,
+      "label": "Application / AI client",
+      "notes": "Application or AI consumer of the custom gateway. The external opaque application user key must be trusted and bound server-side through the RLS request.",
+      "is_optional": false
+    },
+    {
+      "id": "gateway",
+      "zone": "concept",
+      "service_id": null,
+      "label": "Built\nCustom app-aware\nMCP gateway\nBinds trusted app user key",
+      "notes": "Implemented ISV-built hosted custom MCP server provides schema retrieval, scoped value search and DAX execution with trusted application-user-key binding. Reuses the official open-source MCP C# SDK for server transport and the native IQ client; neither forks native Fabric IQ MCP nor invents the protocol. Custom application-aware behavior is not limited to a single function.",
+      "is_optional": false
+    },
+    {
+      "id": "native-schema",
+      "zone": "concept",
+      "service_id": null,
+      "label": "Reused\nNative Fabric IQ MCP\nSchema only\nDelegated metadata account",
+      "notes": "Only native schema retrieval is used, through delegated OAuth with a metadata account. Native query execution and value search are not used. Native Fabric IQ MCP does not accept service-principal/app-only authentication.",
+      "is_optional": false
+    },
+    {
+      "id": "powerbi-rls",
+      "zone": "concept",
+      "service_id": null,
+      "label": "Reused\nPower BI REST + model RLS\nData + reports\nService principal",
+      "notes": "Custom data tools use Power BI REST executeDaxQueries with a service principal; the request accepts query, roles and customData, and dynamic model RLS can evaluate CUSTOMDATA(). A role-bearing service principal requires workspace Admin. Report embedding uses GenerateToken with effective identity fields username, roles, datasets and customData, bound to the same trusted opaque application user key and model RLS. This reuses, rather than rebuilds, Power BI authorization.",
+      "is_optional": false
+    }
+  ],
+  "edges": [
+    {
+      "id": "client-gateway",
+      "from": "client",
+      "to": "gateway",
+      "kind": "control",
+      "label": null
+    },
+    {
+      "id": "gateway-schema",
+      "from": "gateway",
+      "to": "native-schema",
+      "kind": "query",
+      "label": null
+    },
+    {
+      "id": "gateway-data",
+      "from": "gateway",
+      "to": "powerbi-rls",
+      "kind": "query",
+      "label": null
+    }
+  ],
+  "rails": [],
+  "style_mode": "minimal"
+}

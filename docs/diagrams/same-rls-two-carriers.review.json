@@ -1,0 +1,9 @@
+{
+  "reviewed_pages": [
+    "Same RLS, two carriers"
+  ],
+  "findings": [],
+  "summary": "Same RLS, two carriers: Consistent with AIR\u2019s implemented logical CustomData-mode comparison: six boxes, two correctly directed unlabeled arrows, and no icons. Labels remain readable at 900px, with no material clipping, overlaps, misleading boundaries or contrast defects. Live report/chat parity and USERNAME()/UPN compatibility remain unverified as documented in supporting material; their omission from this page is appropriate.",
+  "passed": true,
+  "diagram_sha256": "6daa817cd501e69d0e7b825c5b19a234512146568934e5e9dbf119afd509fa60"
+}
