@@ -1,32 +1,58 @@
-# Semantic Gateway MCP server: AI analytics for ISV users on Power BI semantic models
+# Add AI chat to Power BI Embedded with model-enforced RLS
 
-**A custom MCP server the ISV hosts in front of Microsoft Fabric: your users sign in to your app, any MCP
-client can ask questions, and the semantic model's row-level security decides what each user sees.**
+**Reuse your application's identity and entitlement mapping so Embedded reports and AI-generated DAX
+are evaluated under the same semantic-model row-level security (RLS) role.**
 
-> **Educational sample.** This is a clear, working reference for a pattern, not a Microsoft product or
-> a production-ready service. It uses synthetic data only. Everything described below ran live on
-> 29 September 2026; see [what ran live](#what-ran-live).
+This repository implements an ISV-hosted **Semantic Gateway**: application chat and MCP clients call
+the gateway, which binds each query to the authenticated user's application key. Power BI enforces
+the model's RLS; the language model does not decide authorization. The validated path uses
+`CUSTOMDATA()`, not an embed token passed to an AI service.
+
+> **Educational reference, not a production service or Microsoft product.** Live validation on
+> 5 October 2026 demonstrated the same-user Embedded/AI path with synthetic data. The
+> [dated evidence](docs/evidence/live-validation-2026-10-05.md) distinguishes tested behavior from
+> production identity, hosting, and customer-model integrations that remain unqualified.
+
+## Start with the Embedded experience
+
+The sample portal presents the report and shared RLS identity before chat. Sign in as a synthetic user,
+load their report, and ask for a customer/product breakdown. Changing the user changes the scope in
+both paths without changing the query's authorization rules.
+
+| Persona | Grants | Observed in the report and fresh AI queries |
+|---|---|---|
+| `erin` | A/Home and B/Auto | 250 across 2 activities + 900 across 1; total 1,150 across 3. |
+| `dan` | B/Home only | 700 across 1. A direct Customer A query using `ALL('Scope')` still returned no rows. |
+| `frank` | None | Valid empty results, not another user's data or a failed request disguised as zero. |
+
+![Same application user and RLS role in the Embedded report and AI chat, using synthetic data](docs/images/embedded-ai-same-rls.png)
+
+The report comparison is a **baseline aggregate cross-check**, not certification of every AI answer or
+identical underlying rows. The live tests also queried the engine without customer filters to check
+that the grants, rather than the AI's choice of filters, limited the results.
 
 ## The problem
 
 Independent software vendors (ISVs) often embed Power BI in their product with **app owns data**: the
 product signs users in with its own identity provider, and a backend service principal tells Power BI
-which rows each user may see. Those users are **not** Microsoft Entra users.
+which rows each user may see. The scenario here does not require those users to have identities or
+permissions in the Fabric tenant; they may use the ISV's existing identity provider.
 
 Now the ISV's customers want AI over the same data, and increasingly they want to use **the MCP client
 they already have** (GitHub Copilot, VS Code, Claude or their own agent) rather than only a chat box
-inside the product. Two things block the obvious route:
+inside the product. Direct Fabric access is not a drop-in replacement for that application-owned
+identity model:
 
 1. The [Fabric IQ MCP server](https://learn.microsoft.com/fabric/iq/connectors/fabric-iq-mcp) runs every
-   tool, including `ExecuteQuery`, **as the signed-in Entra user**. ISV end users have no Entra identity,
-   and there is no parameter that says *"run this as application user A1"*.
-2. Handing customers a direct connection to Fabric would mean handing out Entra identities and bypassing
-   the product's own sign-in, entitlements and audit.
+   tool, including `ExecuteQuery`, **as the signed-in Entra user**. That delegated identity does not
+   automatically carry the ISV's opaque application user key and grants.
+2. Direct delegated access requires its own identity and permission integration. This sample instead
+   retains the application's sign-in, entitlement lookup, and gateway boundary.
 
 ## The solution in one picture
 
 The ISV runs a **Semantic Gateway MCP server**: a custom MCP server next to its product, and the only
-thing any AI client talks to. It is an MCP server to your clients, an MCP client to Fabric IQ (schema only),
+interface its AI clients use. It is an MCP server to your clients, an MCP client to Fabric IQ (schema only),
 and the point where every query gets the user's key. Full architecture, how to add it to your app and the
 user auth flow: [docs/architecture.md](docs/architecture.md).
 
@@ -65,20 +91,20 @@ flowchart LR
     TOOLS -- "DAX + role + customData<br/>(app identity)" --> REST
 ```
 
-Three rules make it safe:
+The authorization boundary is explicit:
 
 > **Your identity provider decides who is asking. The gateway attaches that user's key to every query.
-> The semantic model decides which rows exist for them.**
+> The semantic model decides which rows they may query.**
 
 The model (or the MCP client) writes the DAX, but it never chooses the user, the role, the key or the
-credentials. Row-level security runs inside the engine after the query is written, so even an
-unfiltered or adversarial query only returns the caller's rows.
-
-![The sample ISV portal: the signed-in user, their user key and RLS role, a question, the answer and the gateway's live steps](docs/images/portal-chat.png)
+credentials. Executed queries are constrained by the configured model role, rather than by
+LLM-authored customer filters. Correct role definitions and trusted identity mapping remain essential;
+RLS does not make an unsupported or fabricated answer correct.
 
 ## Contents
 
 - [Architecture, app integration and auth flow](docs/architecture.md)
+- [Start with the Embedded experience](#start-with-the-embedded-experience)
 - [How a question flows](#how-a-question-flows)
 - [The three tools](#the-three-tools)
 - [How the semantic model enforces access](#how-the-semantic-model-enforces-access)
@@ -88,6 +114,7 @@ unfiltered or adversarial query only returns the caller's rows.
 - [What ran live](#what-ran-live)
 - [Security responsibilities](#security-responsibilities)
 - [Run it yourself](#run-it-yourself)
+- [Evidence gaps and production boundaries](#evidence-gaps-and-production-boundaries)
 - [Repository map](#repository-map)
 - [FAQ](#faq)
 
@@ -140,8 +167,8 @@ endpoint and the portal agent.
 
 | Tool | Arguments | What the gateway does |
 |---|---|---|
-| `get_semantic_model_schema` | none | Returns the Fabric IQ schema from a cache (re-read in the background every 60 minutes by default; a snapshot on disk covers IQ outages). Tables listed in `FabricIq:ExcludeTables`, such as the RLS mapping table, are removed. Schema is the same for every user, because RLS filters rows, not metadata. |
-| `search_values` | `table`, `column`, `search_text` | Finds exact text values (for example *Home*) **among the rows this user may see**, so a user cannot even discover values outside their scope. Replaces IQ `ValueSearch`. |
+| `get_semantic_model_schema` | none | Returns cached Fabric IQ metadata from a delegated account. Configured tables and relationships are excluded. This is an intentionally shared metadata surface, not a per-user OLS projection; snapshot fallback may serve stale metadata. |
+| `search_values` | `table`, `column`, `search_text` | Searches values through the same RLS-bound query path. Results and fallback samples reflect what the model role permits; a limited sample is not proof that an entity does not exist. Replaces IQ `ValueSearch`. |
 | `execute_dax` | `query` | Runs the DAX through `executeDaxQueries` with the fixed role and the caller's key. Replaces IQ `ExecuteQuery`. A small check rejects identity functions (`CUSTOMDATA()`, `USERNAME()`), `INFO` functions, DMVs and excluded tables; it is defense in depth, not the boundary. |
 
 No tool accepts a user, role, key or model ID as an argument. The user always comes from the validated
@@ -201,8 +228,9 @@ RLS restricts the tables themselves, and those functions only remove filters fro
 | **Metadata account** | One delegated Entra account | A public client app. One interactive `sign-in`, then silent refresh from the OS-protected MSAL cache. | Reading the schema from Fabric IQ, and nothing else. IQ `ExecuteQuery` is never called. |
 | **Gateway's Azure identity** | Managed identity in Azure, your Azure CLI sign-in locally | `ManagedIdentityCredential` on App Service or Container Apps, otherwise `AzureCliCredential` for the tenant; the token is cached | The portal agent's Azure OpenAI calls (*Cognitive Services OpenAI User*). |
 
-Only tokens issued **for the gateway** (issuer and audience validated) are accepted. The gateway never
-forwards a user's token to Microsoft services, and never accepts a Microsoft token from a client.
+Only application tokens issued **for the gateway** (issuer and audience validated) are accepted.
+An application may use Entra as its identity provider, but tokens for Power BI, Fabric, or Graph are
+not gateway credentials. The gateway does not forward the user's application token to data services.
 
 ## Customer-selected MCP clients
 
@@ -215,13 +243,14 @@ the [MCP authorization specification](https://modelcontextprotocol.io/specificat
 - Tokens must be issued for the gateway. No token passthrough.
 - Tools are annotated read-only.
 
-In the live run, **GitHub Copilot CLI** connected as an unmodified MCP client, listed the three tools,
+In the September live run, **GitHub Copilot CLI** connected as an unmodified MCP client, listed the three tools,
 read the schema, recovered from its own DAX error, and returned only the signed-in user's rows. Setup for
 Copilot CLI, VS Code and other clients: [docs/mcp-clients.md](docs/mcp-clients.md).
 
 For production, point `Auth:Authority` at an identity provider that supports the MCP OAuth flow
 (authorization code with PKCE, plus client ID metadata documents or dynamic client registration), so
-MCP clients can sign users in interactively. The demo uses a pre-issued development token instead.
+MCP clients can sign users in interactively. That production flow is an integration target, not a tested
+feature of the supplied portal. The demonstrated external client uses a pre-issued development token.
 
 ## Relationship to Power BI Embedded
 
@@ -241,17 +270,27 @@ of your design carries over.
 
 Measured, not assumed:
 
-- **Parity.** For the same user, the embedded report's exported rows matched the gateway's rows
-  (`Match`), with the same role and key in both paths.
-- **`USERNAME()` roles do not transfer.** An embed token with `username` set to an opaque app key filtered
-  correctly through a `USERNAME()` role. `executeDaxQueries` with the same value as `effectiveUsername`
-  was rejected, because it expects a real directory identity. Use a `CUSTOMDATA()` role for both paths.
+- **Same-user baseline agreement.** October's report exports and gateway aggregates agreed for Erin,
+  Dan, and Frank, including valid empty data. Both backend paths supplied the same role and application
+  key. This does not compare arbitrary chat prose or synchronize report filters.
+- **Opaque usernames need qualification.** September's embed token with an opaque `username` worked
+  with a `USERNAME()` role, while the corresponding `effectiveUsername` query was rejected. Do not
+  assume those identity carriers are interchangeable; `CUSTOMDATA()` is the validated sample path.
+
+The sample targets one configured workspace/model. Keep an existing application's workspace/profile
+isolation; this repository does not implement multi-model routing or prove query-profile/SSO
+compatibility.
 
 Details, including how to migrate an existing Embedded role: [docs/power-bi-embedded.md](docs/power-bi-embedded.md).
 
 ## What ran live
 
-29 September 2026, synthetic model on a Fabric F8 capacity, GPT-5.4 on Azure OpenAI. Full record:
+**5 October 2026:** same-user Embedded exports, fresh AI queries, and unfiltered engine scope checks
+passed for Erin, Dan, and Frank on the synthetic model. Production-path parser and analytical-table
+tests, parity/component tests, TypeScript, and builds also passed. See the
+[October evidence and limitations](docs/evidence/live-validation-2026-10-05.md).
+
+**29 September 2026:** synthetic model on a Fabric F8 capacity, GPT-5.4 on Azure OpenAI. Full record:
 [docs/evidence/live-validation-2026-09-29.md](docs/evidence/live-validation-2026-09-29.md).
 
 | User (user key) | Grants | `execute_dax` of the same unfiltered query |
@@ -266,8 +305,8 @@ Details, including how to migrate an existing Embedded role: [docs/power-bi-embe
 Also observed:
 
 - **Portal agent.** 6 to 10 s per question, measured right after a restart (carol 6.1 s, dan 8.0 s, erin's
-  two-pair breakdown 9.7 s with 2 model calls). A background warmer keeps the schema and the Power BI and
-  Azure OpenAI tokens fresh. An "ignore the filters" request took 16.4 s and still returned only dan's row.
+  two-pair breakdown 9.7 s with 2 model calls). Background warming attempts schema and token refresh;
+  it is not an availability or latency guarantee. An "ignore the filters" request took 16.4 s and still returned only dan's row.
   Before caching and warming, 25 to 92 s.
 - **Out-of-scope question.** Dan asked about Customer A. The RLS-scoped value search found nothing, and the agent said so.
 - **GitHub Copilot CLI.** It returned Carol's two rows only.
@@ -278,41 +317,76 @@ Also observed:
 
 What the pattern gives you:
 
-- **The AI cannot widen access.** Role and key come from the gateway, and RLS runs in the engine.
+- **Executed queries cannot choose a wider grant.** Role and key come from the trusted gateway,
+  and correctly configured RLS runs in the engine. AI prose remains a separate correctness concern.
 - **Unknown or unentitled users get nothing.** They are rejected at the gateway or see empty results.
-- **Errors fail closed.** Service errors reach the client as tool errors, never as partial data.
+- **Failures are not successful evidence.** Error rowsets and multiple data results are rejected.
+  A failed replacement analytical query clears the displayed table; lookup tables do not replace it.
 
 What you own:
 
 - **One app identity carries every user's queries.** `executeDaxQueries` allows 120 query requests per
   minute per caller, and all ISV users share the app identity. Cache, queue or shard for real traffic.
 - **The app identity is powerful.** As workspace Admin without a role it could read everything, so the
-  gateway always sends the role. Keep its certificate in Key Vault or use a managed identity.
+  gateway always sends the role. Protect and rotate its certificate. The supplied Power BI client
+  uses a Windows certificate store or PEM pair; alternative credential integrations are not supplied.
 - **The metadata account's delegated scopes allow more than schema reads.** Keep IQ `ExecuteQuery` and
   `ValueSearch` out of reach, and give the account the least access that still reads the schema. The
   model's `MetadataOnly` role is there to deny it rows (not verified in this sample).
 - **Correct is not the same as secure.** RLS keeps answers inside the user's scope; it does not make
   generated DAX right. Show the rows, and evaluate answer quality separately.
 - **Schema and data are untrusted input to the LLM.** Descriptions, AI instructions and values can carry
-  prompt injection. The model still cannot change who is asking.
+  prompt injection. Approve the shared external metadata surface, and do not equate table exclusions
+  with per-user OLS or complete removal of sensitive metadata references.
 
 ## Run it yourself
 
-You need a Fabric capacity, a workspace, rights to create two app registrations, and an Azure OpenAI
-deployment. The numbered setup, with scripts, is in [scripts/README.md](scripts/README.md). In short:
+Choose the onboarding track:
+
+| Track | Starting point | Guide |
+|---|---|---|
+| Extend an existing Embedded app | Reuse its model, application identity, entitlement lookup, and isolation; qualify the RLS identity carrier. | [Embedded integration](docs/power-bi-embedded.md) and [architecture](docs/architecture.md). |
+| Reproduce the synthetic demonstration | Create only approved demo resources and use the supplied model/personas/report. | [Numbered setup and scripts](scripts/README.md). |
+
+Do not pass a customer model ID to the synthetic deployment script: its update path replaces the
+definition with this repository's model. Obtain approval for resource creation, permissions, and
+capacity costs, and record which demo resources must be removed afterward.
+
+After configuring the gateway for either track:
 
 ```powershell
-pwsh .\scripts\Deploy-SemanticModel.ps1 -TenantId <tenant> -WorkspaceId <workspace>
-pwsh .\scripts\New-AppIdentity.ps1 -TenantId <tenant>
-pwsh .\scripts\Add-WorkspaceMember.ps1 -TenantId <tenant> -WorkspaceId <workspace> -PrincipalId <sp-object-id> -PrincipalType ServicePrincipal -Role Admin
-pwsh .\scripts\New-MetadataClient.ps1 -TenantId <tenant>
-# fill src\SemanticGateway\appsettings.Local.json, then:
-npm --prefix .\src\web install; npm --prefix .\src\web run build
+# Put your configuration in ignored src\SemanticGateway\appsettings.Local.json.
+npm --prefix .\src\web ci
+npm --prefix .\src\web run build
 dotnet run --project .\src\SemanticGateway -- sign-in
 dotnet run --project .\src\SemanticGateway      # http://localhost:5187
 ```
 
-Prerequisites: .NET 8 SDK, Node.js 24+, PowerShell 7, Azure CLI.
+Prerequisites: .NET 8 SDK/runtime (the repository also permits newer stable SDKs), Node.js 24.15+ in
+the 24.x line or Node.js 26+, PowerShell 7, and Azure CLI. The certificate-creation helper is Windows
+specific. The validated deployment used F8; it is not a universal minimum sizing recommendation.
+
+The portal agent needs an Azure OpenAI deployment and gateway access to it. External MCP clients
+bring their own model. Keep tokens, certificates, real user mappings, and local operating notes out of
+Git. The development issuer is only for synthetic local demonstrations, not public production sign-in.
+
+When presenting, ensure capacity is active, sign in after the final gateway restart, and load a fresh
+report token. The sample requests a ten-minute embed token; use the reload control for a longer demo.
+
+## Evidence gaps and production boundaries
+
+This is a proven instructional pattern, not a drop-in production package:
+
+- The supplied portal uses a development issuer; changing `Auth:Mode` does not implement production
+  browser sign-in. Real OIDC and interactive MCP OAuth require integration and qualification.
+- Single-model RLS is demonstrated. Customer-specific models, profiles, SSO, composite models, and
+  report-filter context are not qualified by the synthetic test.
+- Metadata is shared and read under a delegated account. Least-privilege access, OLS requirements,
+  snapshot provenance, and approved external schema content need review for each deployment.
+- Engine authorization is distinct from answer grounding. Client-supplied history and final answer
+  provenance are not fully enforced by the sample.
+- Hosting, throughput, operational readiness, credential rotation, and automated teardown are operator
+  responsibilities. Historical timings are observations, not an SLA.
 
 ## Repository map
 
@@ -333,8 +407,12 @@ Prerequisites: .NET 8 SDK, Node.js 24+, PowerShell 7, Azure CLI.
 as your user, so RLS would apply to the wrong identity, or not at all if the account is a workspace
 Admin, Member or Contributor.
 
-**Why not give MCP clients Fabric IQ directly?** Your users are not Entra users, and your product's
-sign-in, entitlements and audit would be bypassed.
+**Why not give MCP clients Fabric IQ directly?** Delegated Fabric permissions do not automatically carry
+your application's opaque user key and entitlement policy. That is a different identity integration.
+
+**Is this a native Fabric Data Agent?** No. It is a custom gateway over a Power BI semantic model.
+Native data-agent service-principal support is a separate integration and does not establish this
+sample's per-request external application-key RLS behavior.
 
 **Why use Fabric IQ at all?** It is the AI-facing description of the model: tables, measures,
 relationships and model-authored AI instructions, maintained with the model. The execution side does not
@@ -345,8 +423,9 @@ filters after the LLM is done.
 
 **Can an embed token call these APIs?** No. Embed tokens authorize embedded content only.
 
-**Do users need Power BI licenses or Entra accounts?** They do not need Entra accounts. Review capacity
-and licensing for your own topology.
+**Do users need Power BI licenses or Fabric-tenant identities?** This app-owns-data pattern does not
+require provisioning the external user in the Fabric tenant. Your application still authenticates
+them. Review capacity, licensing, and identity requirements for your actual topology.
 
 ## License
 

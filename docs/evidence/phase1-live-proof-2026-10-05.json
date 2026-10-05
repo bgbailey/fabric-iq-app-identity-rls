@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-05",
+  "scope": "approved synthetic model",
+  "personas": {
+    "erin": {
+      "sharedIdentityVerified": true,
+      "unfilteredEngineScopeVerified": true,
+      "gatewayAggregatesVerified": true,
+      "embeddedBaseline": "baseline-aggregate-match",
+      "aiFreshQueryVerified": true,
+      "aiAggregatesVerified": true
+    },
+    "dan": {
+      "sharedIdentityVerified": true,
+      "unfilteredEngineScopeVerified": true,
+      "gatewayAggregatesVerified": true,
+      "embeddedBaseline": "baseline-aggregate-match",
+      "aiFreshQueryVerified": true,
+      "aiAggregatesVerified": true
+    },
+    "frank": {
+      "sharedIdentityVerified": true,
+      "unfilteredEngineScopeVerified": true,
+      "gatewayAggregatesVerified": true,
+      "embeddedBaseline": "verified-empty",
+      "aiFreshQueryVerified": true,
+      "aiAggregatesVerified": true
+    }
+  }
+}

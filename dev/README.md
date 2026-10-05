@@ -10,3 +10,8 @@ the solution in `src/` stays easy to read.
 
 The live harness reads a small JSON query configuration (tenant, workspace, model, service principal
 client ID and certificate thumbprint, `identityMode`, role). Keep it outside the repository.
+
+The existing test project also references the production gateway for offline Arrow-result and
+analytical-table-selection regressions. These tests exercise the code in `src/`, not a duplicate
+parser or selector. They do not call cloud services or establish engine-enforced RLS; the live
+verifier and same-user report/chat rehearsal remain separate evidence.

@@ -134,7 +134,7 @@ public sealed class ChatAgent(SemanticModelTools tools, IOptions<AzureOpenAISett
                 await Emit("tool", "started", name, new() { ["arguments"] = arguments });
 
                 var result = await tools.InvokeAsync(user, name, JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(arguments), cancellationToken);
-                lastTable = result.Table ?? lastTable;
+                lastTable = SelectAnalyticalTable(lastTable, name, result);
                 toolCalls.Add(new ToolCallSummary(name, arguments, result.Dax, result.Table?.Rows.Count, result.IsError));
                 await Emit("tool", result.IsError ? "failed" : "completed", name, new()
                 {
@@ -147,6 +147,12 @@ public sealed class ChatAgent(SemanticModelTools tools, IOptions<AzureOpenAISett
             }
         }
         throw new InvalidOperationException("The model did not finish within the tool-call limit.");
+    }
+
+    internal static QueryResult? SelectAnalyticalTable(QueryResult? currentTable, string toolName, ToolResult result)
+    {
+        if (toolName != SemanticModelTools.ExecuteDax) return currentTable;
+        return result.IsError ? null : result.Table;
     }
 
     private async Task<JsonNode> CallResponsesApiAsync(JsonArray input, CancellationToken cancellationToken)

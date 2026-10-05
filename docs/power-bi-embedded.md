@@ -39,6 +39,35 @@ In code:
 [EmbedTokenService.cs](../src/SemanticGateway/Fabric/EmbedTokenService.cs) and
 [DaxQueryClient.cs](../src/SemanticGateway/Fabric/DaxQueryClient.cs).
 
+## Demonstrating the same RLS process for AI chat
+
+Start with the customer's familiar Embedded experience, then ask the same signed-in user's AI chat
+for a customer/product breakdown. The identity panel shows the application user key and RLS role
+shared by both backend paths. The embed token is not reused for AI: the same entitlement policy is
+supplied through a different API request, and the semantic model enforces it.
+
+Use these synthetic personas to make the authorization boundary visible:
+
+| User | Expected scope | What to demonstrate |
+|---|---|---|
+| `erin` | A/Home and B/Auto only | Report and AI show those exact pairs: 250 across two activities and 900 across one. Neither off-diagonal pair is authorized. |
+| `dan` | B/Home only | Report and AI show 700 across one activity. Asking about Customer A must not reveal its data. |
+| `frank` | No grants | AI returns no visible data. A missing or failed report export is an error/limitation, not proof of no access. |
+
+The optional parity check compares **fixed baseline aggregates** from one report table with the
+gateway's Customer/Product totals and counts. A "Baseline aggregate match" is a supporting check,
+not certification of every AI answer, identical underlying activity rows, or synchronized report
+filters. Only schema-bearing, valid empty results can establish verified-empty agreement.
+
+After the final gateway restart, sign in again: development tokens use a process-local signing key.
+Load or reload the report shortly before presenting; its requested embed-token lifetime is ten minutes.
+Keep report filters unchanged for the baseline comparison and inspect the actual AI tool execution.
+
+Development authentication is for this synthetic demonstration. An existing application integrates
+its identity provider and entitlement lookup; profile routing, SSO, and arbitrary customer models need
+their own qualification. No changes to the model's RLS rules are required for this sample's proven
+`CUSTOMDATA()` path.
+
 ## Measured on 29 September 2026
 
 | Test | Result |

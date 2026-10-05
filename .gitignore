@@ -18,6 +18,7 @@ __pycache__/
 *auth*.json
 *.local.json
 .local/
+.copilot/
 artifacts/
 TestResults/
 *.user

@@ -114,7 +114,7 @@ export function App() {
       <header className="app-header">
         <div className="brand">
           <svg className="brand-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 8h22M5 16h22M5 24h22M11 5v22M21 5v22" /></svg>
-          <div><h1>Contoso Insights</h1><p>Semantic Gateway MCP server sample</p></div>
+          <div><h1>Contoso Insights</h1><p>AI alongside your Power BI Embedded application</p></div>
         </div>
         {config && <div className="header-meta"><span className="proof-badge">{config.model}</span><span className="proof-badge">{config.identityMode}</span></div>}
       </header>
@@ -126,7 +126,7 @@ export function App() {
       {config && auth && (
         <div className="workspace">
           <aside className="controls-panel">
-            <div className="section-heading"><h2>Identity</h2><button className="text-button" onClick={signOut}>Sign out</button></div>
+            <div className="section-heading"><h2>Shared RLS identity</h2><button className="text-button" onClick={signOut}>Sign out</button></div>
             <dl className="identity-grid">
               <div><dt>Name</dt><dd>{auth.me.displayName}</dd></div>
               <div><dt>Subject</dt><dd><code>{auth.me.subject}</code></dd></div>
@@ -137,10 +137,12 @@ export function App() {
           </aside>
 
           <main className="conversation-panel">
+            {config.auth.mode === 'Development' && <p className="demo-banner">Development authentication with synthetic users. Production sign-in integration is not demonstrated here.</p>}
+            {config.embedEnabled && <EmbeddedReport token={auth.token} />}
             <div className="conversation-header">
               <span className="eyebrow">Chat</span>
               <h2>Ask the semantic model as {auth.me.displayName}</h2>
-              <p>The gateway maps the signed-in user to a user key and the semantic model applies RLS.</p>
+              <p>Your embedded report and AI queries use the same application user key and semantic-model RLS role. Power BI enforces the granted scope in both paths.</p>
             </div>
 
             <section className="question-composer">
@@ -164,14 +166,12 @@ export function App() {
               {chat.kind === 'error' && <ErrorMessage error={chat.error} />}
               <ExecutionTrace events={events} />
               {chat.kind === 'done' && <Results result={chat.result} />}
-              {config.embedEnabled && <EmbeddedReport token={auth.token} />}
             </div>
           </main>
         </div>
       )}
 
-      <footer className="page-footer"><p>Synthetic data for learning and development.</p><span>Sign in → chat → RLS rows → embedded report parity</span></footer>
+      <footer className="page-footer"><p>Synthetic data for learning and development.</p><span>Sign in → Embedded report → AI → RLS scope</span></footer>
     </div>
   );
 }
-

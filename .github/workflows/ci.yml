@@ -1,0 +1,57 @@
+name: Offline CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  offline:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+      DOTNET_NOLOGO: "1"
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up .NET 8 SDK and runtime
+        uses: actions/setup-dotnet@v6.0.0
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Set up Node.js 24 LTS
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: "24.18.0"
+          package-manager-cache: false
+
+      - name: Build solution including production gateway
+        run: dotnet build .\fabric-iq-app-identity-rls.sln --configuration Release --nologo
+
+      - name: Test offline harness and production regressions
+        run: dotnet test .\dev\rls-harness\IqRls.Tests\IqRls.Tests.csproj --configuration Release --no-build --no-restore --nologo
+
+      - name: Run 36 offline model-definition checks
+        run: dotnet run --project .\dev\model-definition\ModelDefinition.csproj --configuration Release --no-build --no-restore -- test .
+
+      - name: Install locked frontend dependencies
+        working-directory: src\web
+        run: npm ci
+
+      - name: Test frontend with one thread worker
+        working-directory: src\web
+        run: npm test -- --pool=threads --maxWorkers=1
+
+      - name: Typecheck and build frontend
+        working-directory: src\web
+        run: npm run build

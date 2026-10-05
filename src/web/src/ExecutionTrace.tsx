@@ -10,11 +10,11 @@ const labels: Record<ChatEvent['step'], string> = {
 
 export function ExecutionTrace({ events }: { events: ChatEvent[] }) {
   return (
-    <section className="execution-panel" aria-labelledby="execution-heading">
-      <div className="section-heading">
+    <details className="execution-panel" aria-labelledby="execution-heading">
+      <summary className="section-heading">
         <h3 id="execution-heading">Gateway steps</h3>
-        <span className="small-label">Actual events from the stream</span>
-      </div>
+        <span className="small-label">{events.some(event => event.status === 'failed') ? 'A step failed - expand details' : 'Expand technical details'}</span>
+      </summary>
       <ol className="execution-timeline">
         {steps.map(step => {
           const stepEvents = events.filter(event => event.step === step);
@@ -45,6 +45,6 @@ export function ExecutionTrace({ events }: { events: ChatEvent[] }) {
           );
         })}
       </ol>
-    </section>
+    </details>
   );
 }

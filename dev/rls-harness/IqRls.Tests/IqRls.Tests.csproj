@@ -25,6 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\IqRls.Core\IqRls.Core.csproj" />
     <ProjectReference Include="..\IqRls.Cli\IqRls.Cli.csproj" />
+    <ProjectReference Include="..\..\..\src\SemanticGateway\SemanticGateway.csproj" />
   </ItemGroup>
 
   <ItemGroup>

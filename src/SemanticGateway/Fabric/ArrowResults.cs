@@ -43,7 +43,9 @@ public static class ArrowResults
                 message ??= column >= 0 && rows.Count > 0 ? rows[0][column] : null;
                 throw new ToolException("The DAX query failed: " + (message ?? "unknown error"));
             }
-            result ??= new QueryResult(schema.FieldsList.Select(f => new ResultColumn(f.Name, TypeName(f.DataType))).ToList(), rows);
+            if (result is not null)
+                throw new ToolException("The query returned multiple data result sets; only one is supported.");
+            result = new QueryResult(schema.FieldsList.Select(f => new ResultColumn(f.Name, TypeName(f.DataType))).ToList(), rows);
         }
         return result ?? throw new ToolException("The query returned no result set.");
     }
