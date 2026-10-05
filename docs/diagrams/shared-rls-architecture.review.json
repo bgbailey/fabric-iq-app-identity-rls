@@ -1,0 +1,21 @@
+{
+  "reviewed_pages": [
+    "Architecture"
+  ],
+  "findings": [
+    {
+      "severity": "low",
+      "category": "layout",
+      "page": "Architecture",
+      "element_ids": [
+        "edge-id:embed-request",
+        "edge-id:embed-bound-identity"
+      ],
+      "problem": "The 'identities: username, roles, customData, datasets' label masks part of the dashed bound-identity connector and crowds its label, weakening association with the solid GenerateToken request.",
+      "correction": "Move or wrap the request label beside its solid connector, clear of the dashed identity path and its label. Preserve all four field names."
+    }
+  ],
+  "summary": "Architecture: All AIR nodes and flows, illustrative-only qualification and key limitations are present. No evident clipping, incorrect arrow directions or unreadable text. Icon records bind depicted bytes to the catalog and document an official ZIP URL, retrieval time and archive/asset hashes; hashes alone do not prove publisher provenance. Legacy mirror acquisition and whether newer assets exist elsewhere remain unverified; absent ZIP version/date fields are not defects. This visual review does not establish factual currency, release status, deployment validity or editability.",
+  "passed": true,
+  "diagram_sha256": "9bfed438928ad0a317db2dad758704d41896b20b9d5e7f20c65477508885299e"
+}

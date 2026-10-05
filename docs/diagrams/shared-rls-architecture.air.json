@@ -1,0 +1,309 @@
+{
+  "title": "Shared RLS for reports and AI",
+  "audience": "customer README",
+  "pattern": "custom",
+  "template_id": null,
+  "template_version": null,
+  "assumptions": [
+    "Source-pinned simplification of commit 84b9d80a92035ace1889be904d09e46ea9480111; no API, authentication or model changes.",
+    "Zones represent logical ownership, not network or deployment boundaries.",
+    "Legend: solid calls = query/control; dashed carriers = identity/tokens. No data-movement or reference edges are specified.",
+    "Optional inference footnote: portal Azure OpenAI Responses uses a separate gateway Azure identity; inference is outside the Fabric query flow.",
+    "Specific REST/authentication documentation governs; no general AAC diagram is adopted. No production, tenant-isolation, OLS or GA claims are made."
+  ],
+  "evidence_gaps": [
+    "Deployment tenant, workspace Admin, certificate and scope-grant configuration have not been validated.",
+    "Delegated metadata consent and the optional inference credential mechanism are unspecified.",
+    "Reference guidance remains cached at 6c11ad58c25992e5d1435ce7cd80d217d5598a31; refresh was blocked by an unrelated dirty checkout.",
+    "Fabric blog coverage was blocked by HTTP 403."
+  ],
+  "unresolved_services": [
+    {
+      "id": "app-sign-in",
+      "raw_mention": "Application + AI clients",
+      "guessed_category": "application",
+      "proposed_label": "Application + AI clients",
+      "reason": "No approved catalog mapping; neutral component."
+    },
+    {
+      "id": "trusted-identity",
+      "raw_mention": "Trusted application identity",
+      "guessed_category": "identity",
+      "proposed_label": "Trusted application identity",
+      "reason": "No approved catalog mapping; neutral component."
+    },
+    {
+      "id": "shared-tools",
+      "raw_mention": "Custom gateway tools",
+      "guessed_category": "custom tools",
+      "proposed_label": "Custom gateway tools",
+      "reason": "No approved catalog mapping; neutral component."
+    },
+    {
+      "id": "service-principal",
+      "raw_mention": "Entra service principal",
+      "guessed_category": "application identity",
+      "proposed_label": "Entra service principal",
+      "reason": "No approved catalog mapping; neutral component."
+    },
+    {
+      "id": "embed-service",
+      "raw_mention": "Report embedding",
+      "guessed_category": "application component",
+      "proposed_label": "Report embedding",
+      "reason": "No approved catalog mapping; neutral component."
+    },
+    {
+      "id": "native-iq",
+      "raw_mention": "Native Fabric IQ MCP",
+      "guessed_category": "metadata endpoint",
+      "proposed_label": "Native Fabric IQ MCP",
+      "reason": "No approved catalog mapping; neutral component."
+    },
+    {
+      "id": "execute-dax-api",
+      "raw_mention": "Power BI REST executeDaxQueries",
+      "guessed_category": "query endpoint",
+      "proposed_label": "Power BI REST executeDaxQueries",
+      "reason": "No approved catalog mapping; neutral component."
+    },
+    {
+      "id": "generate-token-api",
+      "raw_mention": "Power BI REST GenerateToken",
+      "guessed_category": "token endpoint",
+      "proposed_label": "Power BI REST GenerateToken",
+      "reason": "No approved catalog mapping; neutral component."
+    }
+  ],
+  "sources": [
+    "https://learn.microsoft.com/en-us/fabric/iq/connectors/fabric-iq-mcp",
+    "https://learn.microsoft.com/en-us/rest/api/power-bi/datasets/execute-dax-queries-in-group",
+    "https://learn.microsoft.com/en-us/rest/api/power-bi/embed-token/generate-token",
+    "https://learn.microsoft.com/en-us/power-bi/developer/embedded/cloud-rls",
+    "https://learn.microsoft.com/en-us/power-bi/developer/embedded/embed-service-principal",
+    "https://learn.microsoft.com/en-us/power-bi/developer/embedded/embed-tokens"
+  ],
+  "catalog_version": "0.1.0",
+  "zones": [
+    {
+      "id": "external",
+      "label": "External customer / application",
+      "kind": "external",
+      "parent_zone": null,
+      "style": "solid",
+      "description": null,
+      "slot": null,
+      "position": null,
+      "children": [],
+      "min_nodes": null,
+      "max_nodes": null,
+      "node_layout": "vertical"
+    },
+    {
+      "id": "gateway",
+      "label": "ISV-owned Semantic Gateway",
+      "kind": "azure",
+      "parent_zone": null,
+      "style": "solid",
+      "description": null,
+      "slot": null,
+      "position": null,
+      "children": [],
+      "min_nodes": null,
+      "max_nodes": null,
+      "node_layout": "vertical"
+    },
+    {
+      "id": "microsoft",
+      "label": "Microsoft Fabric / Power BI",
+      "kind": "fabric",
+      "parent_zone": null,
+      "style": "solid",
+      "description": null,
+      "slot": null,
+      "position": null,
+      "children": [],
+      "min_nodes": null,
+      "max_nodes": null,
+      "node_layout": "vertical"
+    }
+  ],
+  "security_annotations": [],
+  "nodes": [
+    {
+      "id": "app-sign-in",
+      "zone": "external",
+      "service_id": null,
+      "label": "Application + AI clients\nApp JWT",
+      "notes": "Portal /api/chat invokes shared tools in-process, not through self-HTTP MCP. External MCP agents call /mcp.",
+      "is_optional": false
+    },
+    {
+      "id": "embedded-report",
+      "zone": "external",
+      "service_id": "fabric.power_bi",
+      "label": "Power BI\nEmbedded report",
+      "notes": "Browser report queries the same semantic model and exact grants as AI. The backend SPN bearer is never sent to the browser.",
+      "is_optional": false
+    },
+    {
+      "id": "trusted-identity",
+      "zone": "gateway",
+      "service_id": null,
+      "label": "Trusted application identity\nValidated sub -> userKey\nFixed role + model",
+      "notes": "Validate app JWT issuer, audience, signature and lifetime. Map trusted sub server-side to opaque userKey, fixed role and configured model. Clients and AI cannot select key, role or model.",
+      "is_optional": false
+    },
+    {
+      "id": "shared-tools",
+      "zone": "gateway",
+      "service_id": null,
+      "label": "Custom gateway tools\nget_semantic_model_schema\nsearch_values + execute_dax",
+      "notes": "Both custom search_values and execute_dax use the shared Power BI REST executeDaxQueries path.",
+      "is_optional": false
+    },
+    {
+      "id": "service-principal",
+      "zone": "gateway",
+      "service_id": null,
+      "label": "Entra service principal\nCertificate-backed",
+      "notes": "Query/embed identity lane: certificate-authenticated backend SPN OAuth bearer, distinct from the app JWT and embed token.",
+      "is_optional": false
+    },
+    {
+      "id": "embed-service",
+      "zone": "gateway",
+      "service_id": null,
+      "label": "Report embedding\nSame bound userKey + role",
+      "notes": "Embed-config route: /api/embed, not /api/embed-config. Effective identity binds username and customData to userKey, with the fixed role and configured dataset.",
+      "is_optional": false
+    },
+    {
+      "id": "native-iq",
+      "zone": "microsoft",
+      "service_id": null,
+      "label": "Native Fabric IQ MCP\nGetSemanticModelSchema\n(artifactId)",
+      "notes": "Metadata-only identity lane: delegated metadata-account OAuth, never SPN/app-only. Filtered cached schema is shared, not per-user OLS. Native ExecuteQuery and ValueSearch are not used.",
+      "is_optional": false
+    },
+    {
+      "id": "execute-dax-api",
+      "zone": "microsoft",
+      "service_id": null,
+      "label": "Power BI REST\nexecuteDaxQueries",
+      "notes": "customData is a request-body field, not an OAuth claim. Role-bearing SPN queries require workspace Admin.",
+      "is_optional": false
+    },
+    {
+      "id": "generate-token-api",
+      "zone": "microsoft",
+      "service_id": null,
+      "label": "Power BI REST\nGenerateToken",
+      "notes": "The same backend SPN authenticates GenerateToken. Token issuance is not a data query.",
+      "is_optional": false
+    },
+    {
+      "id": "semantic-model",
+      "zone": "microsoft",
+      "service_id": "fabric.semantic_model",
+      "label": "Semantic Model\nRLS: CUSTOMDATA()\nExact user-key / scope grants",
+      "notes": "The model role evaluates CUSTOMDATA() as the opaque userKey against exact scope grants.",
+      "is_optional": false
+    }
+  ],
+  "edges": [
+    {
+      "id": "report-auth",
+      "from": "app-sign-in",
+      "to": "trusted-identity",
+      "kind": "identity",
+      "label": "App JWT"
+    },
+    {
+      "id": "mcp-dispatch",
+      "from": "trusted-identity",
+      "to": "shared-tools",
+      "kind": "identity",
+      "label": "Bound userKey + fixed role"
+    },
+    {
+      "id": "native-schema",
+      "from": "shared-tools",
+      "to": "native-iq",
+      "kind": "query",
+      "label": "Delegated OAuth: schema only"
+    },
+    {
+      "id": "schema-model",
+      "from": "native-iq",
+      "to": "semantic-model",
+      "kind": "query",
+      "label": "Read model schema"
+    },
+    {
+      "id": "dax-request",
+      "from": "shared-tools",
+      "to": "execute-dax-api",
+      "kind": "query",
+      "label": "Body: query + roles + customData=userKey"
+    },
+    {
+      "id": "spn-query-auth",
+      "from": "service-principal",
+      "to": "execute-dax-api",
+      "kind": "identity",
+      "label": "SPN OAuth bearer"
+    },
+    {
+      "id": "query-model",
+      "from": "execute-dax-api",
+      "to": "semantic-model",
+      "kind": "query",
+      "label": "RLS-bound DAX"
+    },
+    {
+      "id": "embed-bound-identity",
+      "from": "trusted-identity",
+      "to": "embed-service",
+      "kind": "identity",
+      "label": "Same bound userKey + role"
+    },
+    {
+      "id": "spn-embed-auth",
+      "from": "service-principal",
+      "to": "embed-service",
+      "kind": "identity",
+      "label": "Same backend SPN"
+    },
+    {
+      "id": "embed-request",
+      "from": "embed-service",
+      "to": "generate-token-api",
+      "kind": "control",
+      "label": "identities: username, roles, customData, datasets"
+    },
+    {
+      "id": "embed-token-return",
+      "from": "generate-token-api",
+      "to": "embedded-report",
+      "kind": "identity",
+      "label": "Distinct embed token to browser"
+    },
+    {
+      "id": "report-model",
+      "from": "embedded-report",
+      "to": "semantic-model",
+      "kind": "query",
+      "label": "Report query with embed token"
+    },
+    {
+      "id": "embed-model-scope",
+      "from": "generate-token-api",
+      "to": "semantic-model",
+      "kind": "control",
+      "label": "Dataset scope; not a query"
+    }
+  ],
+  "rails": [],
+  "style_mode": "minimal"
+}

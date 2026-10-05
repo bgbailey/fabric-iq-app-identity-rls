@@ -56,40 +56,21 @@ interface its AI clients use. It is an MCP server to your clients, an MCP client
 and the point where every query gets the user's key. Full architecture, how to add it to your app and the
 user auth flow: [docs/architecture.md](docs/architecture.md).
 
-```mermaid
-flowchart LR
-    subgraph CLIENTS["Your customers' AI clients"]
-        direction TB
-        PORTAL["Your product's chat<br/>(portal agent)"]
-        MCPC["Any MCP client<br/>GitHub Copilot, VS Code,<br/>Claude, custom agents"]
-    end
+![Architecture: delegated metadata through native Fabric IQ MCP, service-principal queries and Embedded tokens through Power BI REST, and the same CUSTOMDATA-based semantic-model RLS](docs/images/shared-rls-architecture.png)
 
-    IDP["Your identity provider<br/>issues the user's token"]
+[Open full-size diagram](docs/images/shared-rls-architecture.png) ·
+[Editable draw.io source](docs/diagrams/shared-rls-architecture.drawio) ·
+[Sources, review, and limitations](docs/diagrams/README.md)
 
-    subgraph GW["Semantic Gateway MCP server (you host it)"]
-        direction TB
-        AUTH["1 Validate token<br/>map user to user key"]
-        AGENT["Chat agent<br/>Azure OpenAI Responses"]
-        TOOLS["2 Three tools<br/>get_semantic_model_schema<br/>search_values<br/>execute_dax"]
-        AUTH -- "portal chat" --> AGENT
-        AUTH -- "MCP tool calls" --> TOOLS
-        AGENT --> TOOLS
-    end
+| Path | Identity and call | Where the user key goes |
+|---|---|---|
+| **Schema** | Delegated metadata account → native Fabric IQ MCP `GetSemanticModelSchema` | No external-user key; shared filtered metadata. |
+| **AI data** | Custom `search_values` / `execute_dax` → certificate-backed service principal → Power BI REST `executeDaxQueries` | Request body: fixed `roles` and `customData = userKey`. |
+| **Embedded** | The same service principal → Power BI REST `GenerateToken` | Effective identity: the same role and `customData = userKey`; a distinct embed token goes to the browser. |
 
-    subgraph FABRIC["Microsoft Fabric / Power BI"]
-        direction TB
-        IQ["Fabric IQ MCP<br/>schema only"]
-        REST["Power BI REST<br/>executeDaxQueries"]
-        SM[("Semantic model<br/>RLS role reads CUSTOMDATA()")]
-        REST --> SM
-    end
-
-    IDP -. "sign-in" .-> CLIENTS
-    PORTAL -- "bearer token" --> AUTH
-    MCPC -- "bearer token, MCP" --> AUTH
-    TOOLS -- "schema, cached<br/>(metadata account)" --> IQ
-    TOOLS -- "DAX + role + customData<br/>(app identity)" --> REST
-```
+**The service principal does not authenticate to Fabric IQ MCP.** `customData` is query/effective-identity
+content, not a claim in its OAuth token. The semantic model reads it through `CUSTOMDATA()` and applies
+the same configured grants to reports and AI queries.
 
 The authorization boundary is explicit:
 

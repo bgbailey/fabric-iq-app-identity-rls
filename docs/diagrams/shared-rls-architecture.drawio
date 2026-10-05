@@ -1,0 +1,214 @@
+<mxfile data-diagram-profile="technical-light" host="Electron" data-layout-revision="v8" pages="2">
+  <diagram data-air-schema="2" data-air-rails="[]" id="architecture" name="Architecture">
+    <mxGraphModel dx="3323" dy="3803" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1840" pageHeight="1870" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="zone-external" data-air-id="external" data-air-key="air-id:external" data-air-kind="external" data-air-type="zone" data-style-role="zone" parent="1" style="swimlane;html=1;startSize=100;horizontal=1;container=1;collapsible=0;rounded=1;arcSize=4;whiteSpace=wrap;fillColor=#F6F7F9;swimlaneFillColor=#F6F7F9;strokeColor=#A5B1BC;strokeWidth=1.6;fontFamily=Segoe UI;fontSize=29;fontStyle=1;fontColor=#17212B;align=left;verticalAlign=top;spacingLeft=22;spacingTop=16;spacingRight=18;movable=1;" value="External customer / application" vertex="1">
+          <mxGeometry height="1460" width="320" x="30" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="node-app-sign-in" data-air-id="app-sign-in" data-air-key="air-id:app-sign-in" data-air-notes="Portal /api/chat invokes shared tools in-process, not through self-HTTP MCP. External MCP agents call /mcp." data-air-service="" data-air-type="node" parent="zone-external" style="rounded=1;arcSize=7;html=1;whiteSpace=wrap;overflow=hidden;container=1;collapsible=0;fillColor=#FFFFFF;strokeColor=#536575;strokeWidth=1.7;fontFamily=Segoe UI;fontSize=30;fontColor=#17212B;align=center;verticalAlign=top;spacingTop=18;spacingLeft=14;spacingRight=14;spacingBottom=12;" tooltip="Portal /api/chat invokes shared tools in-process, not through self-HTTP MCP. External MCP agents call /mcp." value="&lt;b&gt;Application + AI clients&lt;/b&gt;&lt;br&gt;App JWT" vertex="1">
+          <mxGeometry height="170" width="260" x="30" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="node-embedded-report" data-air-id="embedded-report" data-air-key="air-id:embedded-report" data-air-notes="Browser report queries the same semantic model and exact grants as AI. The backend SPN bearer is never sent to the browser." data-air-service="fabric.power_bi" data-air-type="node" parent="zone-external" style="rounded=1;arcSize=7;html=1;whiteSpace=wrap;overflow=hidden;container=1;collapsible=0;fillColor=#FFFFFF;strokeColor=#536575;strokeWidth=1.7;fontFamily=Segoe UI;fontSize=30;fontColor=#17212B;align=center;verticalAlign=top;spacingTop=70;spacingLeft=14;spacingRight=14;spacingBottom=12;" tooltip="Browser report queries the same semantic model and exact grants as AI. The backend SPN bearer is never sent to the browser." value="&lt;b&gt;Power BI&lt;/b&gt;&lt;br&gt;Embedded report" vertex="1">
+          <mxGeometry height="200" width="280" x="30" y="1200" as="geometry" />
+        </mxCell>
+        <mxCell id="node-embedded-report-icon" data-air-decoration="1" data-icon-record="{&quot;asset_id&quot;:&quot;sha256:a9fb1a29a2c459c00a3ec03d92922993260e20597072cf4378819009e80c34e5&quot;,&quot;asset_path&quot;:&quot;icons/fabric/svg/report_64_item.svg&quot;,&quot;cell_id&quot;:&quot;node-embedded-report-icon&quot;,&quot;format&quot;:&quot;svg&quot;,&quot;node_id&quot;:&quot;embedded-report&quot;,&quot;pin&quot;:&quot;sha256:a9fb1a29a2c459c00a3ec03d92922993260e20597072cf4378819009e80c34e5&quot;,&quot;provenance&quot;:{&quot;acquisition_origin_verification&quot;:&quot;legacy-unverified&quot;,&quot;artwork_origin&quot;:&quot;Microsoft upstream package artwork; community distribution&quot;,&quot;distribution_channel&quot;:&quot;fabrictools-mirror&quot;,&quot;mirror_commit&quot;:null,&quot;origin_verification&quot;:&quot;byte-matched-to-official-distribution&quot;,&quot;retrieved_at&quot;:null,&quot;terms_url&quot;:&quot;https://learn.microsoft.com/en-us/fabric/fundamentals/icons&quot;,&quot;upstream_published_at&quot;:null,&quot;upstream_version&quot;:null,&quot;verification&quot;:{&quot;archive_sha256&quot;:&quot;fc22e71b0545ed15e22c53f16bf4fb06ffe72daabd3c90a947a6e481c9675e6b&quot;,&quot;asset_sha256&quot;:&quot;a9fb1a29a2c459c00a3ec03d92922993260e20597072cf4378819009e80c34e5&quot;,&quot;distribution_channel&quot;:&quot;microsoft-official-zip&quot;,&quot;mirror_commit&quot;:null,&quot;origin_verification&quot;:&quot;official-url-retrieved&quot;,&quot;retrieved_at&quot;:&quot;2026-09-16T13:02:43.050282+00:00&quot;,&quot;source_url&quot;:&quot;https://raw.githubusercontent.com/microsoft/fabric-samples/main/docs-samples/Icons.zip&quot;,&quot;terms_url&quot;:&quot;https://learn.microsoft.com/en-us/fabric/fundamentals/icons&quot;,&quot;upstream_package&quot;:null,&quot;upstream_published_at&quot;:null,&quot;upstream_version&quot;:null}},&quot;service_id&quot;:&quot;fabric.power_bi&quot;,&quot;sha256&quot;:&quot;a9fb1a29a2c459c00a3ec03d92922993260e20597072cf4378819009e80c34e5&quot;}" data-icon-sha256="a9fb1a29a2c459c00a3ec03d92922993260e20597072cf4378819009e80c34e5" parent="node-embedded-report" style="shape=image;html=1;imageAspect=1;aspect=fixed;strokeColor=none;fillColor=none;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgZmlsbD0iY3VycmVudENvbG9yIj48cGF0aCBmaWxsPSJ1cmwoI2kyYTBkZDUtYSkiIGQ9Ik02IDEzYTcgNyAwIDAgMSA3LTdoMzhhNyA3IDAgMCAxIDcgN3YzOGE3IDcgMCAwIDEtNyA3SDEzYTcgNyAwIDAgMS03LTd6Ii8+PHBhdGggZmlsbD0idXJsKCNpMmEwZGQ1LWIpIiBmaWxsLW9wYWNpdHk9Ii4yIiBkPSJNNiAxM2E3IDcgMCAwIDEgNy03aDM4YTcgNyAwIDAgMSA3IDd2MzhhNyA3IDAgMCAxLTcgN0gxM2E3IDcgMCAwIDEtNy03eiIvPjxwYXRoIGZpbGw9InVybCgjaTJhMGRkNS1jKSIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNNTEgN0gxM2E2IDYgMCAwIDAtNiA2djM4YTYgNiAwIDAgMCA2IDZoMzhhNiA2IDAgMCAwIDYtNlYxM2E2IDYgMCAwIDAtNi02TTEzIDZhNyA3IDAgMCAwLTcgN3YzOGE3IDcgMCAwIDAgNyA3aDM4YTcgNyAwIDAgMCA3LTdWMTNhNyA3IDAgMCAwLTctN3oiIGNsaXAtcnVsZT0iZXZlbm9kZCIvPjxwYXRoIGZpbGw9InVybCgjaTJhMGRkNS1kKSIgZD0iTTIyLjI0NSAxOGEuNzUuNzUgMCAwIDEgLjc1Ljc1djI2LjVhLjc1Ljc1IDAgMCAxLTEuNSAwdi0yNi41YS43NS43NSAwIDAgMSAuNzUtLjc1Ii8+PHBhdGggZmlsbD0idXJsKCNpMmEwZGQ1LWUpIiBkPSJNMzEuMjU3IDQ1LjI1di0xOS41YS43NS43NSAwIDAgMSAxLjUgMHYxOS41YS43NS43NSAwIDAgMS0xLjUgMCIvPjxwYXRoIGZpbGw9InVybCgjaTJhMGRkNS1mKSIgZD0iTTQyLjUwNSAzNC43NWEuNzUuNzUgMCAwIDAtMS41IDB2MTAuNWEuNzUuNzUgMCAwIDAgMS41IDB6Ii8+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJpMmEwZGQ1LWEiIHgxPSIyMC40NDQiIHgyPSIyNy4wMjIiIHkxPSI2IiB5Mj0iNTguNjIyIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iI2ZmZiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0VCRUJFQiIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJpMmEwZGQ1LWMiIHgxPSIyMi43OTIiIHgyPSIyOS43OTMiIHkxPSI2IiB5Mj0iNTguNTExIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iI0JCQiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzg4OCIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJpMmEwZGQ1LWQiIHgxPSIyMS40OTUiIHgyPSI0OC4zNzkiIHkxPSIxOCIgeTI9IjM4LjE3MiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIHN0b3AtY29sb3I9IiNDMjg0MDAiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNBODY1MDAiLz48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudCBpZD0iaTJhMGRkNS1lIiB4MT0iMjEuNDk1IiB4Mj0iNDguMzc5IiB5MT0iMTgiIHkyPSIzOC4xNzIiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjQzI4NDAwIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjQTg2NTAwIi8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImkyYTBkZDUtZiIgeDE9IjIxLjQ5NSIgeDI9IjQ4LjM3OSIgeTE9IjE4IiB5Mj0iMzguMTcyIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iI0MyODQwMCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0E4NjUwMCIvPjwvbGluZWFyR3JhZGllbnQ+PHJhZGlhbEdyYWRpZW50IGlkPSJpMmEwZGQ1LWIiIGN4PSIwIiBjeT0iMCIgcj0iMSIgZ3JhZGllbnRUcmFuc2Zvcm09Im1hdHJpeCgyNy40NDQ0IDQxLjE2NjcyIC0zNS42MjUwMSAyMy43NDk5NSAyMi42MSAxOS41NDEpIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agb2Zmc2V0PSIuMTc3IiBzdG9wLWNvbG9yPSIjZmZmIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjQjhCOEI4Ii8+PC9yYWRpYWxHcmFkaWVudD48L2RlZnM+PC9zdmc+;sketch=0;comic=0;" value="" vertex="1">
+          <mxGeometry height="50" width="50" x="115" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="zone-gateway" data-air-id="gateway" data-air-key="air-id:gateway" data-air-kind="azure" data-air-type="zone" data-style-role="zone" parent="1" style="swimlane;html=1;startSize=100;horizontal=1;container=1;collapsible=0;rounded=1;arcSize=4;whiteSpace=wrap;fillColor=#EFF4F7;swimlaneFillColor=#EFF4F7;strokeColor=#A5B1BC;strokeWidth=1.6;fontFamily=Segoe UI;fontSize=29;fontStyle=1;fontColor=#17212B;align=left;verticalAlign=top;spacingLeft=22;spacingTop=16;spacingRight=18;movable=1;" value="ISV-owned Semantic Gateway" vertex="1">
+          <mxGeometry height="1460" width="700" x="390" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="node-trusted-identity" data-air-id="trusted-identity" data-air-key="air-id:trusted-identity" data-air-notes="Validate app JWT issuer, audience, signature and lifetime. Map trusted sub server-side to opaque userKey, fixed role and configured model. Clients and AI cannot select key, role or model." data-air-service="" data-air-type="node" parent="zone-gateway" style="rounded=1;arcSize=7;html=1;whiteSpace=wrap;overflow=hidden;container=1;collapsible=0;fillColor=#DFEBF4;strokeColor=#536575;strokeWidth=1.7;fontFamily=Segoe UI;fontSize=30;fontColor=#17212B;align=center;verticalAlign=top;spacingTop=18;spacingLeft=14;spacingRight=14;spacingBottom=12;" tooltip="Validate app JWT issuer, audience, signature and lifetime. Map trusted sub server-side to opaque userKey, fixed role and configured model. Clients and AI cannot select key, role or model." value="&lt;b&gt;Trusted application identity&lt;/b&gt;&lt;br&gt;Validated sub -&amp;gt; userKey&lt;br&gt;Fixed role + model" vertex="1">
+          <mxGeometry height="200" width="610" x="40" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="identity-binding" data-air-decoration="1" parent="node-trusted-identity" style="html=1;whiteSpace=wrap;overflow=hidden;fillColor=none;strokeColor=none;fontFamily=Segoe UI;fontSize=26;fontColor=#243747;fontStyle=0;align=center;verticalAlign=middle;spacing=0;" value="Clients / AI cannot choose userKey, role or model." vertex="1">
+          <mxGeometry height="45" width="574" x="18" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="node-shared-tools" data-air-id="shared-tools" data-air-key="air-id:shared-tools" data-air-notes="Both custom search_values and execute_dax use the shared Power BI REST executeDaxQueries path." data-air-service="" data-air-type="node" parent="zone-gateway" style="rounded=1;arcSize=7;html=1;whiteSpace=wrap;overflow=hidden;container=1;collapsible=0;fillColor=#FFFFFF;strokeColor=#536575;strokeWidth=1.7;fontFamily=Segoe UI;fontSize=28;fontColor=#17212B;align=center;verticalAlign=top;spacingTop=18;spacingLeft=14;spacingRight=14;spacingBottom=12;" tooltip="Both custom search_values and execute_dax use the shared Power BI REST executeDaxQueries path." value="&lt;b&gt;Custom gateway tools&lt;/b&gt;&lt;br&gt;get_semantic_model_schema&lt;br&gt;search_values + execute_dax" vertex="1">
+          <mxGeometry height="180" width="420" x="230" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="node-service-principal" data-air-id="service-principal" data-air-key="air-id:service-principal" data-air-notes="Query/embed identity lane: certificate-authenticated backend SPN OAuth bearer, distinct from the app JWT and embed token." data-air-service="" data-air-type="node" parent="zone-gateway" style="rounded=1;arcSize=7;html=1;whiteSpace=wrap;overflow=hidden;container=1;collapsible=0;fillColor=#FFFFFF;strokeColor=#536575;strokeWidth=1.7;fontFamily=Segoe UI;fontSize=28;fontColor=#17212B;align=center;verticalAlign=top;spacingTop=18;spacingLeft=14;spacingRight=14;spacingBottom=12;" tooltip="Query/embed identity lane: certificate-authenticated backend SPN OAuth bearer, distinct from the app JWT and embed token." value="&lt;b&gt;Entra service principal&lt;/b&gt;&lt;br&gt;Certificate-backed" vertex="1">
+          <mxGeometry height="160" width="310" x="40" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="node-embed-service" data-air-id="embed-service" data-air-key="air-id:embed-service" data-air-notes="Embed-config route: /api/embed, not /api/embed-config. Effective identity binds username and customData to userKey, with the fixed role and configured dataset." data-air-service="" data-air-type="node" parent="zone-gateway" style="rounded=1;arcSize=7;html=1;whiteSpace=wrap;overflow=hidden;container=1;collapsible=0;fillColor=#FFFFFF;strokeColor=#536575;strokeWidth=1.7;fontFamily=Segoe UI;fontSize=30;fontColor=#17212B;align=center;verticalAlign=top;spacingTop=18;spacingLeft=14;spacingRight=14;spacingBottom=12;" tooltip="Embed-config route: /api/embed, not /api/embed-config. Effective identity binds username and customData to userKey, with the fixed role and configured dataset." value="&lt;b&gt;Report embedding&lt;/b&gt;&lt;br&gt;Same bound userKey + role" vertex="1">
+          <mxGeometry height="140" width="420" x="230" y="1240" as="geometry" />
+        </mxCell>
+        <mxCell id="zone-microsoft" data-air-id="microsoft" data-air-key="air-id:microsoft" data-air-kind="fabric" data-air-type="zone" data-style-role="zone" parent="1" style="swimlane;html=1;startSize=100;horizontal=1;container=1;collapsible=0;rounded=1;arcSize=4;whiteSpace=wrap;fillColor=#F1F7F4;swimlaneFillColor=#F1F7F4;strokeColor=#A5B1BC;strokeWidth=1.6;fontFamily=Segoe UI;fontSize=29;fontStyle=1;fontColor=#17212B;align=left;verticalAlign=top;spacingLeft=22;spacingTop=16;spacingRight=18;movable=1;" value="Microsoft Fabric / Power BI" vertex="1">
+          <mxGeometry height="1460" width="680" x="1130" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="node-native-iq" data-air-id="native-iq" data-air-key="air-id:native-iq" data-air-notes="Metadata-only identity lane: delegated metadata-account OAuth, never SPN/app-only. Filtered cached schema is shared, not per-user OLS. Native ExecuteQuery and ValueSearch are not used." data-air-service="" data-air-type="node" parent="zone-microsoft" style="rounded=1;arcSize=7;html=1;whiteSpace=wrap;overflow=hidden;container=1;collapsible=0;fillColor=#FFFFFF;strokeColor=#536575;strokeWidth=1.7;fontFamily=Segoe UI;fontSize=30;fontColor=#17212B;align=center;verticalAlign=top;spacingTop=18;spacingLeft=14;spacingRight=14;spacingBottom=12;" tooltip="Metadata-only identity lane: delegated metadata-account OAuth, never SPN/app-only. Filtered cached schema is shared, not per-user OLS. Native ExecuteQuery and ValueSearch are not used." value="&lt;b&gt;Native Fabric IQ MCP&lt;/b&gt;&lt;br&gt;GetSemanticModelSchema&lt;br&gt;(artifactId)" vertex="1">
+          <mxGeometry height="240" width="540" x="40" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="schema-scope" data-air-decoration="1" parent="node-native-iq" style="html=1;whiteSpace=wrap;overflow=hidden;fillColor=none;strokeColor=none;fontFamily=Segoe UI;fontSize=25;fontColor=#243747;fontStyle=0;align=center;verticalAlign=middle;spacing=0;" value="Shared cached schema ≠ per-user OLS.&lt;br&gt;No native ExecuteQuery / ValueSearch." vertex="1">
+          <mxGeometry height="83" width="504" x="18" y="142" as="geometry" />
+        </mxCell>
+        <mxCell id="node-execute-dax-api" data-air-id="execute-dax-api" data-air-key="air-id:execute-dax-api" data-air-notes="customData is a request-body field, not an OAuth claim. Role-bearing SPN queries require workspace Admin." data-air-service="" data-air-type="node" parent="zone-microsoft" style="rounded=1;arcSize=7;html=1;whiteSpace=wrap;overflow=hidden;container=1;collapsible=0;fillColor=#FFFFFF;strokeColor=#536575;strokeWidth=1.7;fontFamily=Segoe UI;fontSize=30;fontColor=#17212B;align=center;verticalAlign=top;spacingTop=18;spacingLeft=14;spacingRight=14;spacingBottom=12;" tooltip="customData is a request-body field, not an OAuth claim. Role-bearing SPN queries require workspace Admin." value="&lt;b&gt;Power BI REST&lt;/b&gt;&lt;br&gt;executeDaxQueries" vertex="1">
+          <mxGeometry height="140" width="540" x="40" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="node-generate-token-api" data-air-id="generate-token-api" data-air-key="air-id:generate-token-api" data-air-notes="The same backend SPN authenticates GenerateToken. Token issuance is not a data query." data-air-service="" data-air-type="node" parent="zone-microsoft" style="rounded=1;arcSize=7;html=1;whiteSpace=wrap;overflow=hidden;container=1;collapsible=0;fillColor=#FFFFFF;strokeColor=#536575;strokeWidth=1.7;fontFamily=Segoe UI;fontSize=30;fontColor=#17212B;align=center;verticalAlign=top;spacingTop=18;spacingLeft=14;spacingRight=14;spacingBottom=12;" tooltip="The same backend SPN authenticates GenerateToken. Token issuance is not a data query." value="&lt;b&gt;Power BI REST&lt;/b&gt;&lt;br&gt;GenerateToken" vertex="1">
+          <mxGeometry height="140" width="540" x="40" y="1240" as="geometry" />
+        </mxCell>
+        <mxCell id="identity-fields" data-air-decoration="1" parent="node-generate-token-api" style="html=1;whiteSpace=wrap;overflow=hidden;fillColor=none;strokeColor=none;fontFamily=Segoe UI;fontSize=25;fontColor=#243747;fontStyle=0;align=center;verticalAlign=middle;spacing=0;" value="username = customData = userKey" vertex="1">
+          <mxGeometry height="35" width="504" x="18" y="95" as="geometry" />
+        </mxCell>
+        <mxCell id="node-semantic-model" data-air-id="semantic-model" data-air-key="air-id:semantic-model" data-air-notes="The model role evaluates CUSTOMDATA() as the opaque userKey against exact scope grants." data-air-service="fabric.semantic_model" data-air-type="node" parent="zone-microsoft" style="rounded=1;arcSize=7;html=1;whiteSpace=wrap;overflow=hidden;container=1;collapsible=0;fillColor=#FFFFFF;strokeColor=#536575;strokeWidth=1.7;fontFamily=Segoe UI;fontSize=30;fontColor=#17212B;align=center;verticalAlign=top;spacingTop=70;spacingLeft=14;spacingRight=14;spacingBottom=12;" tooltip="The model role evaluates CUSTOMDATA() as the opaque userKey against exact scope grants." value="&lt;b&gt;Semantic Model&lt;/b&gt;&lt;br&gt;RLS: CUSTOMDATA()&lt;br&gt;Exact user-key / scope grants" vertex="1">
+          <mxGeometry height="200" width="540" x="40" y="910" as="geometry" />
+        </mxCell>
+        <mxCell id="node-semantic-model-icon" data-air-decoration="1" data-icon-record="{&quot;asset_id&quot;:&quot;sha256:87861c159d7b08bbefc2483eda204a0d1ff6c57c4ab9f64b156c29d9125f45b0&quot;,&quot;asset_path&quot;:&quot;icons/fabric/svg/semantic_model_64_item.svg&quot;,&quot;cell_id&quot;:&quot;node-semantic-model-icon&quot;,&quot;format&quot;:&quot;svg&quot;,&quot;node_id&quot;:&quot;semantic-model&quot;,&quot;pin&quot;:&quot;sha256:87861c159d7b08bbefc2483eda204a0d1ff6c57c4ab9f64b156c29d9125f45b0&quot;,&quot;provenance&quot;:{&quot;acquisition_origin_verification&quot;:&quot;legacy-unverified&quot;,&quot;artwork_origin&quot;:&quot;Microsoft upstream package artwork; community distribution&quot;,&quot;distribution_channel&quot;:&quot;fabrictools-mirror&quot;,&quot;mirror_commit&quot;:null,&quot;origin_verification&quot;:&quot;byte-matched-to-official-distribution&quot;,&quot;retrieved_at&quot;:null,&quot;terms_url&quot;:&quot;https://learn.microsoft.com/en-us/fabric/fundamentals/icons&quot;,&quot;upstream_published_at&quot;:null,&quot;upstream_version&quot;:null,&quot;verification&quot;:{&quot;archive_sha256&quot;:&quot;fc22e71b0545ed15e22c53f16bf4fb06ffe72daabd3c90a947a6e481c9675e6b&quot;,&quot;asset_sha256&quot;:&quot;87861c159d7b08bbefc2483eda204a0d1ff6c57c4ab9f64b156c29d9125f45b0&quot;,&quot;distribution_channel&quot;:&quot;microsoft-official-zip&quot;,&quot;mirror_commit&quot;:null,&quot;origin_verification&quot;:&quot;official-url-retrieved&quot;,&quot;retrieved_at&quot;:&quot;2026-09-16T13:02:43.050282+00:00&quot;,&quot;source_url&quot;:&quot;https://raw.githubusercontent.com/microsoft/fabric-samples/main/docs-samples/Icons.zip&quot;,&quot;terms_url&quot;:&quot;https://learn.microsoft.com/en-us/fabric/fundamentals/icons&quot;,&quot;upstream_package&quot;:null,&quot;upstream_published_at&quot;:null,&quot;upstream_version&quot;:null}},&quot;service_id&quot;:&quot;fabric.semantic_model&quot;,&quot;sha256&quot;:&quot;87861c159d7b08bbefc2483eda204a0d1ff6c57c4ab9f64b156c29d9125f45b0&quot;}" data-icon-sha256="87861c159d7b08bbefc2483eda204a0d1ff6c57c4ab9f64b156c29d9125f45b0" parent="node-semantic-model" style="shape=image;html=1;imageAspect=1;aspect=fixed;strokeColor=none;fillColor=none;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgZmlsbD0iY3VycmVudENvbG9yIj48cGF0aCBmaWxsPSJ1cmwoI2kwOTNiOGEtYSkiIGQ9Ik02IDEzYTcgNyAwIDAgMSA3LTdoMzhhNyA3IDAgMCAxIDcgN3YzOGE3IDcgMCAwIDEtNyA3SDEzYTcgNyAwIDAgMS03LTd6Ii8+PHBhdGggZmlsbD0idXJsKCNpMDkzYjhhLWIpIiBmaWxsLW9wYWNpdHk9Ii4yIiBkPSJNNiAxM2E3IDcgMCAwIDEgNy03aDM4YTcgNyAwIDAgMSA3IDd2MzhhNyA3IDAgMCAxLTcgN0gxM2E3IDcgMCAwIDEtNy03eiIvPjxwYXRoIGZpbGw9InVybCgjaTA5M2I4YS1jKSIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNNTEgN0gxM2E2IDYgMCAwIDAtNiA2djM4YTYgNiAwIDAgMCA2IDZoMzhhNiA2IDAgMCAwIDYtNlYxM2E2IDYgMCAwIDAtNi02TTEzIDZhNyA3IDAgMCAwLTcgN3YzOGE3IDcgMCAwIDAgNyA3aDM4YTcgNyAwIDAgMCA3LTdWMTNhNyA3IDAgMCAwLTctN3oiIGNsaXAtcnVsZT0iZXZlbm9kZCIvPjxwYXRoIGZpbGw9InVybCgjaTA5M2I4YS1kKSIgZD0iTTE4IDI4YTMgMyAwIDEgMCAwLTYgMyAzIDAgMCAwIDAgNiIvPjxwYXRoIGZpbGw9InVybCgjaTA5M2I4YS1lKSIgZD0iTTMyIDI4YTMgMyAwIDEgMCAwLTYgMyAzIDAgMCAwIDAgNiIvPjxwYXRoIGZpbGw9InVybCgjaTA5M2I4YS1mKSIgZD0iTTM0Ljg3MyAzOWEzIDMgMCAxIDEtNiAwIDMgMyAwIDAgMSA2IDAiLz48cGF0aCBmaWxsPSJ1cmwoI2kwOTNiOGEtZykiIGQ9Ik0xOCA0MmEzIDMgMCAxIDAgMC02IDMgMyAwIDAgMCAwIDYiLz48cGF0aCBmaWxsPSJ1cmwoI2kwOTNiOGEtaCkiIGQ9Ik00OSAyNWEzIDMgMCAxIDEtNiAwIDMgMyAwIDAgMSA2IDAiLz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImkwOTNiOGEtYSIgeDE9IjIwLjQ0NCIgeDI9IjI3LjAyMiIgeTE9IjYiIHkyPSI1OC42MjIiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjZmZmIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRUJFQkVCIi8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImkwOTNiOGEtYyIgeDE9IjIyLjc5MiIgeDI9IjI5Ljc5MyIgeTE9IjYiIHkyPSI1OC41MTEiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjQkJCIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjODg4Ii8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImkwOTNiOGEtZCIgeDE9IjE1IiB4Mj0iMzIuNDgxIiB5MT0iMjIiIHkyPSI1MS43MTciIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjNzc1MUI4Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNUE0MDlDIi8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImkwOTNiOGEtZSIgeDE9IjE1IiB4Mj0iMzIuNDgxIiB5MT0iMjIiIHkyPSI1MS43MTciIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjNzc1MUI4Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNUE0MDlDIi8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImkwOTNiOGEtZiIgeDE9IjE1IiB4Mj0iMzIuNDgxIiB5MT0iMjIiIHkyPSI1MS43MTciIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjNzc1MUI4Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNUE0MDlDIi8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImkwOTNiOGEtZyIgeDE9IjE1IiB4Mj0iMzIuNDgxIiB5MT0iMjIiIHkyPSI1MS43MTciIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjNzc1MUI4Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNUE0MDlDIi8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImkwOTNiOGEtaCIgeDE9IjE1IiB4Mj0iMzIuNDgxIiB5MT0iMjIiIHkyPSI1MS43MTciIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjNzc1MUI4Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNUE0MDlDIi8+PC9saW5lYXJHcmFkaWVudD48cmFkaWFsR3JhZGllbnQgaWQ9ImkwOTNiOGEtYiIgY3g9IjAiIGN5PSIwIiByPSIxIiBncmFkaWVudFRyYW5zZm9ybT0ibWF0cml4KDI3LjQ0NDQgNDEuMTY2NzIgLTM1LjYyNTAxIDIzLjc0OTk1IDIyLjYxIDE5LjU0MSkiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBvZmZzZXQ9Ii4xNzciIHN0b3AtY29sb3I9IiNmZmYiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNCOEI4QjgiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48L3N2Zz4=;sketch=0;comic=0;" value="" vertex="1">
+          <mxGeometry height="50" width="50" x="245" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-id:report-auth" data-air-id="id:report-auth" data-air-key="air-id:id:report-auth" data-air-kind="identity" data-air-type="edge" edge="1" parent="1" source="node-app-sign-in" style="edgeStyle=segmentEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;strokeColor=#4D5E6B;strokeWidth=2.1;dashed=1;dashPattern=7 5;fontFamily=Segoe UI;fontSize=26;fontColor=#17212B;whiteSpace=wrap;labelWidth=110;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.45;exitPerimeter=0;entryX=0;entryY=0.3825;entryPerimeter=0;" target="node-trusted-identity" value="App JWT">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-20.75" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-id:mcp-dispatch" data-air-id="id:mcp-dispatch" data-air-key="air-id:id:mcp-dispatch" data-air-kind="identity" data-air-type="edge" edge="1" parent="1" source="node-trusted-identity" style="edgeStyle=segmentEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;strokeColor=#4D5E6B;strokeWidth=2.1;dashed=1;dashPattern=7 5;fontFamily=Segoe UI;fontSize=28;fontColor=#17212B;whiteSpace=wrap;labelWidth=360;labelBackgroundColor=#FFFFFF;exitX=0.65;exitY=1;exitPerimeter=0;entryX=0.47;entryY=0;entryPerimeter=0;" target="node-shared-tools" value="Bound userKey + fixed role">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-225" y="-5" as="offset" />
+            <Array as="points">
+              <mxPoint x="826.5" y="550" />
+              <mxPoint x="817.4" y="550" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-id:native-schema" data-air-id="id:native-schema" data-air-key="air-id:id:native-schema" data-air-kind="query" data-air-type="edge" edge="1" parent="1" source="node-shared-tools" style="edgeStyle=segmentEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;strokeColor=#4D5E6B;strokeWidth=2.1;dashed=0;fontFamily=Segoe UI;fontSize=28;fontColor=#17212B;whiteSpace=wrap;labelWidth=440;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.3;exitPerimeter=0;entryX=0.8703703703703703;entryY=0;entryPerimeter=0;" target="node-native-iq" value="Delegated OAuth: schema only">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="48.5" as="offset" />
+            <Array as="points">
+              <mxPoint x="1105" y="634" />
+              <mxPoint x="1105" y="552" />
+              <mxPoint x="1640" y="552" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-id:schema-model" data-air-id="id:schema-model" data-air-key="air-id:id:schema-model" data-air-kind="query" data-air-type="edge" edge="1" parent="1" source="node-native-iq" style="edgeStyle=segmentEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;strokeColor=#4D5E6B;strokeWidth=2.1;dashed=0;fontFamily=Segoe UI;fontSize=28;fontColor=#17212B;whiteSpace=wrap;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.6;exitPerimeter=0;entryX=1;entryY=0.2;entryPerimeter=0;labelWidth=300;" target="node-semantic-model" value="Read model schema">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-120" y="151" as="offset" />
+            <Array as="points">
+              <mxPoint x="1760" y="688" />
+              <mxPoint x="1760" y="1130" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-id:dax-request" data-air-id="id:dax-request" data-air-key="air-id:id:dax-request" data-air-kind="query" data-air-type="edge" edge="1" parent="1" source="node-shared-tools" style="edgeStyle=segmentEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;strokeColor=#4D5E6B;strokeWidth=2.1;dashed=0;fontFamily=Segoe UI;fontSize=26;fontColor=#17212B;whiteSpace=wrap;labelWidth=660;labelBackgroundColor=#FFFFFF;exitX=0.85;exitY=1;exitPerimeter=0;entryX=0.58;entryY=0;entryPerimeter=0;" target="node-execute-dax-api" value="Body: query + roles + customData=userKey">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="10.900000000000091" y="-19" as="offset" />
+            <Array as="points">
+              <mxPoint x="977" y="861" />
+              <mxPoint x="1483.2" y="861" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-id:spn-query-auth" data-air-id="id:spn-query-auth" data-air-key="air-id:id:spn-query-auth" data-air-kind="identity" data-air-type="edge" edge="1" parent="1" source="node-service-principal" style="edgeStyle=segmentEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;strokeColor=#4D5E6B;strokeWidth=2.1;dashed=1;dashPattern=7 5;fontFamily=Segoe UI;fontSize=28;fontColor=#17212B;whiteSpace=wrap;labelWidth=385;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.35;exitPerimeter=0;entryX=0;entryY=0.4;entryPerimeter=0;" target="node-execute-dax-api" value="SPN OAuth bearer">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-23" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-id:query-model" data-air-id="id:query-model" data-air-key="air-id:id:query-model" data-air-kind="query" data-air-type="edge" edge="1" parent="1" source="node-execute-dax-api" style="edgeStyle=segmentEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;strokeColor=#4D5E6B;strokeWidth=2.1;dashed=0;fontFamily=Segoe UI;fontSize=28;fontColor=#17212B;whiteSpace=wrap;labelWidth=250;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitPerimeter=0;entryX=0.5;entryY=0;entryPerimeter=0;" target="node-semantic-model" value="RLS-bound DAX">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-100" y="5" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-id:embed-bound-identity" data-air-id="id:embed-bound-identity" data-air-key="air-id:id:embed-bound-identity" data-air-kind="identity" data-air-type="edge" edge="1" parent="1" source="node-trusted-identity" style="edgeStyle=segmentEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;strokeColor=#4D5E6B;strokeWidth=2.1;dashed=1;dashPattern=7 5;fontFamily=Segoe UI;fontSize=28;fontColor=#17212B;whiteSpace=wrap;labelWidth=470;labelBackgroundColor=#FFFFFF;exitX=0;exitY=0.85;exitPerimeter=0;entryX=0.45;entryY=0;entryPerimeter=0;" target="node-embed-service" value="Same bound userKey + role">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="390" y="236.75" as="offset" />
+            <Array as="points">
+              <mxPoint x="410" y="480" />
+              <mxPoint x="410" y="1310" />
+              <mxPoint x="809" y="1310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-id:spn-embed-auth" data-air-id="id:spn-embed-auth" data-air-key="air-id:id:spn-embed-auth" data-air-kind="identity" data-air-type="edge" edge="1" parent="1" source="node-service-principal" style="edgeStyle=segmentEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;strokeColor=#4D5E6B;strokeWidth=2.1;dashed=1;dashPattern=7 5;fontFamily=Segoe UI;fontSize=28;fontColor=#17212B;whiteSpace=wrap;labelWidth=180;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitPerimeter=0;entryX=0;entryY=0.45;entryPerimeter=0;" target="node-embed-service" value="Same backend SPN">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-95" y="91" as="offset" />
+            <Array as="points">
+              <mxPoint x="585" y="1483" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-id:embed-request" data-air-id="id:embed-request" data-air-key="air-id:id:embed-request" data-air-kind="control" data-air-type="edge" edge="1" parent="1" source="node-embed-service" style="edgeStyle=segmentEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;strokeColor=#4D5E6B;strokeWidth=2.1;dashed=0;fontFamily=Segoe UI;fontSize=26;fontColor=#17212B;whiteSpace=wrap;labelWidth=760;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.45;exitPerimeter=0;entryX=0.5;entryY=0;entryPerimeter=0;" target="node-generate-token-api" value="identities: username, roles, customData, datasets">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-128.5" y="-30" as="offset" />
+            <Array as="points">
+              <mxPoint x="1110" y="1483" />
+              <mxPoint x="1110" y="1380" />
+              <mxPoint x="1440" y="1380" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-id:embed-token-return" data-air-id="id:embed-token-return" data-air-key="air-id:id:embed-token-return" data-air-kind="identity" data-air-type="edge" edge="1" parent="1" source="node-generate-token-api" style="edgeStyle=segmentEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;strokeColor=#4D5E6B;strokeWidth=2.1;dashed=1;dashPattern=7 5;fontFamily=Segoe UI;fontSize=28;fontColor=#17212B;whiteSpace=wrap;labelWidth=720;labelBackgroundColor=#FFFFFF;exitX=0.38;exitY=1;exitPerimeter=0;entryX=0.5;entryY=1;entryPerimeter=0;" target="node-embedded-report" value="Distinct embed token to browser">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="132.39999999999998" as="offset" />
+            <Array as="points">
+              <mxPoint x="1375.2" y="1690" />
+              <mxPoint x="200" y="1690" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-id:report-model" data-air-id="id:report-model" data-air-key="air-id:id:report-model" data-air-kind="query" data-air-type="edge" edge="1" parent="1" source="node-embedded-report" style="edgeStyle=segmentEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;strokeColor=#4D5E6B;strokeWidth=2.1;dashed=0;fontFamily=Segoe UI;fontSize=28;fontColor=#17212B;whiteSpace=wrap;labelWidth=590;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0;entryY=0.7;entryPerimeter=0;" target="node-semantic-model" value="Report query with embed token">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="220" as="offset" />
+            <Array as="points">
+              <mxPoint x="370" y="1490" />
+              <mxPoint x="370" y="1230" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-id:embed-model-scope" data-air-id="id:embed-model-scope" data-air-key="air-id:id:embed-model-scope" data-air-kind="control" data-air-type="edge" edge="1" parent="1" source="node-generate-token-api" style="edgeStyle=segmentEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;strokeColor=#4D5E6B;strokeWidth=2.1;dashed=0;fontFamily=Segoe UI;fontSize=26;fontColor=#17212B;whiteSpace=wrap;labelWidth=250;labelBackgroundColor=#FFFFFF;exitX=0.9;exitY=0;exitPerimeter=0;entryX=0.9;entryY=1;entryPerimeter=0;" target="node-semantic-model" value="Dataset scope; not a query">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="title" data-air-decoration="1" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;fillColor=none;strokeColor=none;fontFamily=Segoe UI;fontSize=48;fontColor=#243747;fontStyle=1;align=left;verticalAlign=middle;spacing=0;" value="Shared RLS for reports and AI" vertex="1">
+          <mxGeometry height="65" width="1770" x="30" y="22" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" data-air-decoration="1" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;fillColor=none;strokeColor=none;fontFamily=Segoe UI;fontSize=30;fontColor=#243747;fontStyle=0;align=left;verticalAlign=middle;spacing=0;" value="One server-bound identity · Different carriers · Same exact row-level grants" vertex="1">
+          <mxGeometry height="45" width="1770" x="30" y="98" as="geometry" />
+        </mxCell>
+        <mxCell id="delegated-lane" data-air-decoration="1" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;fillColor=none;strokeColor=none;fontFamily=Segoe UI;fontSize=30;fontColor=#243747;fontStyle=1;align=left;verticalAlign=middle;spacing=0;" value="1  Delegated metadata only" vertex="1">
+          <mxGeometry height="45" width="540" x="1170" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="query-lane" data-air-decoration="1" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;fillColor=none;strokeColor=none;fontFamily=Segoe UI;fontSize=30;fontColor=#243747;fontStyle=1;align=left;verticalAlign=middle;spacing=0;" value="2  Certificate-backed SPN" vertex="1">
+          <mxGeometry height="45" width="630" x="430" y="810" as="geometry" />
+        </mxCell>
+        <mxCell id="body-not-claim" data-air-decoration="1" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;fillColor=none;strokeColor=none;fontFamily=Segoe UI;fontSize=27;fontColor=#243747;fontStyle=0;align=left;verticalAlign=middle;spacing=0;" value="customData is request-body content,&lt;br&gt;not an OAuth claim." vertex="1">
+          <mxGeometry height="115" width="300" x="775" y="940" as="geometry" />
+        </mxCell>
+        <mxCell id="admin-prerequisite" data-air-decoration="1" parent="1" style="html=1;whiteSpace=wrap;overflow=hidden;fillColor=none;strokeColor=none;fontFamily=Segoe UI;fontSize=26;fontColor=#243747;fontStyle=0;align=left;verticalAlign=middle;spacing=0;" value="Role-bearing SPN query:&lt;br&gt;workspace Admin required." vertex="1">
+          <mxGeometry height="105" width="300" x="775" y="1060" as="geometry" />
+        </mxCell>
+        <mxCell id="route" data-air-decoration="1" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;fillColor=none;strokeColor=none;fontFamily=Segoe UI;fontSize=28;fontColor=#243747;fontStyle=1;align=center;verticalAlign=middle;spacing=0;" value="/api/embed" vertex="1">
+          <mxGeometry height="40" width="420" x="620" y="1570" as="geometry" />
+        </mxCell>
+        <mxCell id="client-detail" data-air-decoration="1" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;fillColor=none;strokeColor=none;fontFamily=Segoe UI;fontSize=28;fontColor=#243747;fontStyle=0;align=left;verticalAlign=middle;spacing=0;" value="Portal /api/chat:&lt;br&gt;shared tools in-process.&lt;br&gt;&lt;br&gt;External AI agent:&lt;br&gt;/mcp" vertex="1">
+          <mxGeometry height="230" width="260" x="60" y="575" as="geometry" />
+        </mxCell>
+        <mxCell id="legend" data-air-decoration="1" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;fillColor=none;strokeColor=none;fontFamily=Segoe UI;fontSize=28;fontColor=#243747;fontStyle=0;align=left;verticalAlign=middle;spacing=0;" value="&lt;b&gt;Arrows&lt;/b&gt;   Solid → API / query / control call     ·     Dashed → identity / token carrier" vertex="1">
+          <mxGeometry height="45" width="1770" x="30" y="1750" as="geometry" />
+        </mxCell>
+        <mxCell id="scope-note" data-air-decoration="1" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;fillColor=none;strokeColor=none;fontFamily=Segoe UI;fontSize=27;fontColor=#243747;fontStyle=0;align=left;verticalAlign=middle;spacing=0;" value="Logical ownership, not networks. GenerateToken issues access; it does not query rows." vertex="1">
+          <mxGeometry height="40" width="1770" x="30" y="1800" as="geometry" />
+        </mxCell>
+        <mxCell id="inference-note" data-air-decoration="1" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;fillColor=none;strokeColor=none;fontFamily=Segoe UI;fontSize=27;fontColor=#243747;fontStyle=0;align=left;verticalAlign=middle;spacing=0;" value="Optional portal inference: Azure OpenAI Responses uses a separate gateway Azure identity." vertex="1">
+          <mxGeometry height="40" width="1770" x="30" y="1850" as="geometry" />
+        </mxCell>
+        <mxCell id="source-qualification" data-air-decoration="1" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;fillColor=none;strokeColor=none;fontFamily=Segoe UI;fontSize=27;fontColor=#243747;align=left;verticalAlign=middle;spacing=0;" value="Illustrative-only source overview · Not deployment validation" vertex="1">
+          <mxGeometry height="32" width="1770" x="30" y="145" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="metadata" name="_metadata">
+    <mxGraphModel>
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell data-air-decoration="1" id="meta1" value="title=Shared RLS for reports and AI&#xa;pattern=custom&#xa;catalog_version=0.1.0" style="text;html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="10" y="10" width="800" height="100" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
